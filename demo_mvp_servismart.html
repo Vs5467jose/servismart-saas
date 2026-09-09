@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ServiSmart SaaS — Prototipo Operativo MVP</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    /* Estilos de soporte para scroll y vista imprimible */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.05); }
+    ::-webkit-scrollbar-thumb { background: rgba(15, 23, 42, 0.2); border-radius: 9999px; }
+    @media print {
+      body * { visibility: hidden; }
+      #printableOrderModalContent, #printableOrderModalContent * { visibility: visible; }
+      #printableOrderModalContent { position: absolute; left: 0; top: 0; width: 100%; box-shadow: none; border: none; }
+    }
+  </style>
+</head>
+<body class="bg-[#0f172a] text-slate-100 antialiased min-h-screen flex flex-col font-sans selection:bg-blue-600 selection:text-white">
+
+  <!-- HEADER PRINCIPAL -->
+  <header class="bg-[#1e293b] border-b border-slate-700/80 sticky top-0 z-40 px-5 py-3 shadow-lg">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+      
+      <!-- LOGO & TITULO -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-700 to-cyan-500 flex items-center justify-center text-white font-black text-xl shadow-md shadow-blue-500/20">
+          S
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="font-bold text-lg text-white tracking-tight">ServiSmart <span class="text-blue-400 font-extrabold text-sm bg-blue-950/60 px-2 py-0.5 rounded border border-blue-800">SaaS</span></h1>
+            <span class="bg-emerald-950 text-emerald-300 text-xs px-2 py-0.5 rounded-full border border-emerald-700 font-medium flex items-center gap-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Demo Activa
+            </span>
+          </div>
+          <p class="text-xs text-slate-400">Gestión de Clientes, Técnicos & Garantías a 3 Meses</p>
+        </div>
+      </div>
+
+      <!-- BUSCADOR UNIVERSAL -->
+      <div class="flex-1 max-w-md min-w-[240px]">
+        <div class="relative">
+          <input 
+            type="text" 
+            id="searchInput" 
+            oninput="renderApp()" 
+            placeholder="Buscar por cliente, WhatsApp, placa o marca..." 
+            class="w-full bg-slate-900/90 border border-slate-700 rounded-lg pl-9 pr-4 py-2 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition"
+          />
+          <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+        </div>
+      </div>
+
+      <!-- ACCIONES PRINCIPALES -->
+      <div class="flex items-center gap-2.5">
+        <button 
+          onclick="openAlarmsModal()" 
+          class="relative bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 transition shadow-sm"
+        >
+          <span class="text-base">🔔</span>
+          <span>Alarmas de Garantía</span>
+          <span id="alarmsCountBadge" class="bg-amber-500 text-slate-950 font-black text-[10px] px-1.5 py-0.2 rounded-full">3</span>
+        </button>
+
+        <button 
+          onclick="openNewOrderModal()" 
+          class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-1.5 transition shadow-lg shadow-blue-600/30 hover:scale-[1.02] active:scale-[0.98]"
+        >
+          <span class="text-base font-bold">+</span>
+          <span>Nueva Orden (30s)</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- CONTENEDOR PRINCIPAL -->
+  <main class="max-w-7xl mx-auto w-full p-5 flex-1 flex flex-col gap-6">
+
+    <!-- BARRA DE MÉTRICAS OPERATIVAS (KPIS SECRETARÍA) -->
+    <section class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div class="bg-[#1e293b] border border-slate-700/70 p-4 rounded-xl shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-xs font-medium text-slate-400">Citas Agendadas Hoy</p>
+          <h3 id="statScheduledToday" class="text-2xl font-black text-white mt-1">1</h3>
+          <span class="text-[11px] text-blue-400 font-medium">1 pendiente de atención</span>
+        </div>
+        <div class="w-11 h-11 rounded-lg bg-blue-950/80 border border-blue-800/60 flex items-center justify-center text-xl">
+          📅
+        </div>
+      </div>
+
+      <div class="bg-[#1e293b] border border-slate-700/70 p-4 rounded-xl shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-xs font-medium text-slate-400">Nuevas Solicitudes</p>
+          <h3 id="statNewOrders" class="text-2xl font-black text-amber-400 mt-1">1</h3>
+          <span class="text-[11px] text-amber-300 font-medium">Por asignar técnico</span>
+        </div>
+        <div class="w-11 h-11 rounded-lg bg-amber-950/80 border border-amber-800/60 flex items-center justify-center text-xl">
+          ⚡
+        </div>
+      </div>
+
+      <div class="bg-[#1e293b] border border-slate-700/70 p-4 rounded-xl shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-xs font-medium text-slate-400">Técnicos Libres</p>
+          <h3 id="statAvailableTechs" class="text-2xl font-black text-emerald-400 mt-1">2 / 3</h3>
+          <span class="text-[11px] text-emerald-300 font-medium">Listos para despacho</span>
+        </div>
+        <div class="w-11 h-11 rounded-lg bg-emerald-950/80 border border-emerald-800/60 flex items-center justify-center text-xl">
+          🧑‍🔧
+        </div>
+      </div>
+
+      <div class="bg-[#1e293b] border border-slate-700/70 p-4 rounded-xl shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-xs font-medium text-slate-400">Garantías Activas (3 Meses)</p>
+          <h3 id="statActiveWarranties" class="text-2xl font-black text-cyan-400 mt-1">1</h3>
+          <span class="text-[11px] text-cyan-300 font-medium">Protección automatizada</span>
+        </div>
+        <div class="w-11 h-11 rounded-lg bg-cyan-950/80 border border-cyan-800/60 flex items-center justify-center text-xl">
+          🛡️
+        </div>
+      </div>
+    </section>
+
+    <!-- BANNER DE CONTEXTO TÉCNICO PARA EL INGENIERO LÍDER -->
+    <div class="bg-gradient-to-r from-blue-950/70 via-slate-900 to-slate-900 border border-blue-800/50 rounded-xl p-3.5 flex flex-wrap items-center justify-between gap-3 text-xs">
+      <div class="flex items-center gap-2.5">
+        <span class="px-2 py-0.5 rounded bg-blue-600 text-white font-bold text-[10px] tracking-wide uppercase">Modo Demostración</span>
+        <span class="text-slate-300">Datos simulados en tiempo real con precios colombianos (COP), ficha técnica de equipos y asignación dinámica.</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="resetSeedData()" class="text-xs text-slate-400 hover:text-white underline">Restablecer datos</button>
+      </div>
+    </div>
+
+    <!-- PIPELINE KANBAN DE ÓRDENES DE SERVICIO -->
+    <section class="flex-1 flex flex-col">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-sm font-bold tracking-wider uppercase text-slate-300 flex items-center gap-2">
+          <span>Tablero Operativo de la Secretaría (Pipeline de Servicios)</span>
+          <span class="text-xs font-normal text-slate-500">(Mueve las tarjetas entre estados)</span>
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 flex-1 items-start">
+        
+        <!-- COLUMNA 1: NUEVA SOLICITUD -->
+        <div class="bg-[#182234] border border-slate-700/80 rounded-xl p-3 flex flex-col gap-3 min-h-[420px]">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-700/60">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+              <span class="font-bold text-xs uppercase tracking-wider text-slate-200">1. Nueva Solicitud</span>
+            </div>
+            <span id="colCount-new" class="bg-slate-800 text-slate-300 text-xs px-2 py-0.5 rounded-full font-bold">1</span>
+          </div>
+          <div id="colList-new" class="flex flex-col gap-3"></div>
+        </div>
+
+        <!-- COLUMNA 2: AGENDADA / ASIGNADA -->
+        <div class="bg-[#182234] border border-slate-700/80 rounded-xl p-3 flex flex-col gap-3 min-h-[420px]">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-700/60">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-blue-400"></span>
+              <span class="font-bold text-xs uppercase tracking-wider text-slate-200">2. Agendada</span>
+            </div>
+            <span id="colCount-scheduled" class="bg-slate-800 text-slate-300 text-xs px-2 py-0.5 rounded-full font-bold">1</span>
+          </div>
+          <div id="colList-scheduled" class="flex flex-col gap-3"></div>
+        </div>
+
+        <!-- COLUMNA 3: EN SERVICIO -->
+        <div class="bg-[#182234] border border-slate-700/80 rounded-xl p-3 flex flex-col gap-3 min-h-[420px]">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-700/60">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-purple-400"></span>
+              <span class="font-bold text-xs uppercase tracking-wider text-slate-200">3. En Servicio</span>
+            </div>
+            <span id="colCount-in_progress" class="bg-slate-800 text-slate-300 text-xs px-2 py-0.5 rounded-full font-bold">1</span>
+          </div>
+          <div id="colList-in_progress" class="flex flex-col gap-3"></div>
+        </div>
+
+        <!-- COLUMNA 4: COMPLETADA / GARANTÍA ACTIVA -->
+        <div class="bg-[#182234] border border-slate-700/80 rounded-xl p-3 flex flex-col gap-3 min-h-[420px]">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-700/60">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+              <span class="font-bold text-xs uppercase tracking-wider text-slate-200">4. Completada / Garantía</span>
+            </div>
+            <span id="colCount-completed" class="bg-slate-800 text-slate-300 text-xs px-2 py-0.5 rounded-full font-bold">1</span>
+          </div>
+          <div id="colList-completed" class="flex flex-col gap-3"></div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- TOAST NOTIFICACIONES -->
+  <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- MODAL 1: NUEVA ORDEN DE SERVICIO -->
+  <div id="newOrderModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-[#1e293b] border border-slate-700 rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-150">
+      
+      <div class="px-6 py-4 border-b border-slate-700/80 flex items-center justify-between bg-slate-800/40">
+        <div>
+          <h3 class="text-base font-bold text-white flex items-center gap-2">
+            <span>📝 Registrar Nueva Orden de Servicio</span>
+            <span class="text-[10px] bg-blue-900 text-blue-300 px-2 py-0.5 rounded font-mono">Registro en 30s</span>
+          </h3>
+          <p class="text-xs text-slate-400">Captura rápida para la secretaria con filtro automático de técnicos libres.</p>
+        </div>
+        <button onclick="closeNewOrderModal()" class="text-slate-400 hover:text-white text-xl font-bold p-1">&times;</button>
+      </div>
+
+      <form id="newOrderForm" onsubmit="handleCreateOrder(event)" class="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
+        
+        <!-- DATOS DEL CLIENTE -->
+        <div>
+          <h4 class="text-xs font-bold text-blue-400 uppercase tracking-wider mb-2">1. Datos del Cliente</h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs text-slate-300 mb-1">Nombre Completo *</label>
+              <input required type="text" id="clientName" placeholder="Ej: Dra. Carolina Martínez" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200 focus:border-blue-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-xs text-slate-300 mb-1">WhatsApp / Teléfono *</label>
+              <input required type="text" id="clientPhone" placeholder="+57 300 123 4567" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200 focus:border-blue-500 focus:outline-none">
+            </div>
+            <div class="sm:col-span-2">
+              <label class="block text-xs text-slate-300 mb-1">Dirección y Barrio *</label>
+              <input required type="text" id="clientAddress" placeholder="Ej: Calle 85 # 50-32, Barrio Alto Prado" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200 focus:border-blue-500 focus:outline-none">
+            </div>
+          </div>
+        </div>
+
+        <!-- FICHA TÉCNICA DEL EQUIPO -->
+        <div class="pt-2 border-t border-slate-700/60">
+          <h4 class="text-xs font-bold text-blue-400 uppercase tracking-wider mb-2">2. Ficha Técnica del Equipo</h4>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label class="block text-xs text-slate-300 mb-1">Tipo de Equipo *</label>
+              <select id="equipType" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200 focus:border-blue-500 focus:outline-none">
+                <option value="Aire Acondicionado Split">Aire Acondicionado Split</option>
+                <option value="Aire Acondicionado Cassette">Aire Acondicionado Cassette</option>
+                <option value="Aire Central / Paquete">Aire Central / Paquete</option>
+                <option value="Smart TV / Pantalla">Smart TV / Pantalla</option>
+                <option value="Refrigerador / Nevera">Refrigerador / Nevera</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs text-slate-300 mb-1">Marca *</label>
+              <input required type="text" id="equipBrand" placeholder="Ej: LG / Samsung / Carrier" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200 focus:border-blue-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-xs text-slate-300 mb-1">Modelo / Serie</label>
+              <input type="text" id="equipSerial" placeholder="Ej: VM122CE / NO_VISIBLE" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200 focus:border-blue-500 focus:outline-none">
+            </div>
+            <div class="sm:col-span-3">
+              <label class="block text-xs text-slate-300 mb-1">Daño o Falla Reportada *</label>
+              <textarea required id="equipFault" rows="2" placeholder="Ej: No enfría, turbina sucia y goteo leve de agua..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200 focus:border-blue-500 focus:outline-none"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- ASIGNACIÓN Y COSTOS -->
+        <div class="pt-2 border-t border-slate-700/60">
+          <h4 class="text-xs font-bold text-blue-400 uppercase tracking-wider mb-2">3. Asignación de Técnico y Cobro</h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs text-slate-300 mb-1 flex items-center justify-between">
+                <span>Técnico Asignado:</span>
+                <span class="text-[10px] text-emerald-400">Filtrando solo disponibles 🟢</span>
+              </label>
+              <select id="techSelect" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200 focus:border-blue-500 focus:outline-none">
+                <!-- Se llena dinámicamente -->
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs text-slate-300 mb-1">Valor Estimado en COP ($) *</label>
+              <input required type="number" step="5000" id="orderCost" value="90000" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200 focus:border-blue-500 focus:outline-none font-bold text-emerald-400">
+              <div class="flex gap-1.5 mt-1.5">
+                <button type="button" onclick="document.getElementById('orderCost').value = 80000" class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded hover:bg-slate-700">$80k</button>
+                <button type="button" onclick="document.getElementById('orderCost').value = 100000" class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded hover:bg-slate-700">$100k</button>
+                <button type="button" onclick="document.getElementById('orderCost').value = 180000" class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded hover:bg-slate-700">$180k</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-slate-700 flex items-center justify-end gap-3">
+          <button type="button" onclick="closeNewOrderModal()" class="px-4 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 transition">Cancelar</button>
+          <button type="submit" class="px-5 py-2 rounded-lg text-xs font-bold text-white bg-blue-600 hover:bg-blue-500 transition shadow-lg shadow-blue-600/30">Guardar y Agendar Cita</button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+
+  <!-- MODAL 2: ALARMAS DE GARANTÍA (3 NIVELES) -->
+  <div id="alarmsModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-[#1e293b] border border-slate-700 rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl">
+      
+      <div class="px-6 py-4 border-b border-slate-700/80 flex items-center justify-between bg-slate-800/40">
+        <div>
+          <h3 class="text-base font-bold text-white flex items-center gap-2">
+            <span>🛡️ Motor Automatizado de Alarmas (Garantía 3 Meses)</span>
+          </h3>
+          <p class="text-xs text-slate-400">Disparo inteligente en 3 etapas para control de calidad, satisfacción y renovación.</p>
+        </div>
+        <button onclick="closeAlarmsModal()" class="text-slate-400 hover:text-white text-xl font-bold p-1">&times;</button>
+      </div>
+
+      <div class="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
+        <div class="grid grid-cols-3 gap-2 text-center text-xs pb-3 border-b border-slate-700/60">
+          <div class="bg-blue-950/60 border border-blue-800/60 p-2.5 rounded-lg">
+            <span class="block font-bold text-blue-400">1. Día 1 (+24h)</span>
+            <span class="text-[11px] text-slate-300">Calidad Administrativa</span>
+          </div>
+          <div class="bg-amber-950/60 border border-amber-800/60 p-2.5 rounded-lg">
+            <span class="block font-bold text-amber-400">2. Día 60 (+2 meses)</span>
+            <span class="text-[11px] text-slate-300">Checkup Preventivo</span>
+          </div>
+          <div class="bg-emerald-950/60 border border-emerald-800/60 p-2.5 rounded-lg">
+            <span class="block font-bold text-emerald-400">3. Día 85 (Cierre)</span>
+            <span class="text-[11px] text-slate-300">Oferta Mantenimiento</span>
+          </div>
+        </div>
+
+        <div class="space-y-2.5" id="alarmsListContainer">
+          <!-- Se llena dinámicamente -->
+        </div>
+      </div>
+
+      <div class="px-6 py-3 bg-slate-800/60 border-t border-slate-700/60 flex justify-end">
+        <button onclick="closeAlarmsModal()" class="px-4 py-2 bg-slate-700 text-white rounded-lg text-xs font-semibold hover:bg-slate-600 transition">Cerrar</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL 3: ORDEN DE SERVICIO IMPRIMIBLE (PDF 1 PÁGINA) -->
+  <div id="printOrderModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white text-slate-900 rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+      
+      <!-- CONTENEDOR IMPRIMIBLE OFICIAL -->
+      <div id="printableOrderModalContent" class="p-8 bg-white overflow-y-auto space-y-5 text-xs text-slate-800 font-sans">
+        
+        <!-- ENCABEZADO -->
+        <div class="flex items-center justify-between border-b-2 border-slate-900 pb-4">
+          <div>
+            <h2 class="text-xl font-black tracking-tight text-blue-900">SERVISMART TECHNICAL SERVICES</h2>
+            <p class="text-[11px] text-slate-600 font-medium">Climatización, Refrigeración y Soporte Especializado</p>
+            <p class="text-[10px] text-slate-500">NIT: 901.458.320-1 | PBX: (605) 300 0000 | Barranquilla, Colombia</p>
+          </div>
+          <div class="text-right">
+            <span class="inline-block bg-slate-900 text-white font-mono font-bold text-sm px-3 py-1 rounded">
+              <span id="printOrderCode">OS-2026-0041</span>
+            </span>
+            <p class="text-[10px] text-slate-500 mt-1 font-semibold">Fecha: <span id="printOrderDate">09/09/2026</span></p>
+          </div>
+        </div>
+
+        <!-- DATOS DEL CLIENTE Y TÉCNICO -->
+        <div class="grid grid-cols-2 gap-4 bg-slate-50 p-3 rounded-lg border border-slate-200">
+          <div>
+            <h4 class="font-bold text-[11px] text-blue-900 uppercase tracking-wider mb-1">Datos del Cliente:</h4>
+            <p><strong>Nombre:</strong> <span id="printClientName">-</span></p>
+            <p><strong>WhatsApp:</strong> <span id="printClientPhone">-</span></p>
+            <p><strong>Dirección:</strong> <span id="printClientAddress">-</span></p>
+          </div>
+          <div>
+            <h4 class="font-bold text-[11px] text-blue-900 uppercase tracking-wider mb-1">Asignación de Servicio:</h4>
+            <p><strong>Técnico Asignado:</strong> <span id="printTechName" class="font-semibold text-emerald-800">-</span></p>
+            <p><strong>Modalidad:</strong> <span class="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-bold text-[10px]">Servicio Particular</span></p>
+            <p><strong>Estado:</strong> <span id="printOrderStatus" class="font-semibold">-</span></p>
+          </div>
+        </div>
+
+        <!-- FICHA TÉCNICA DEL EQUIPO -->
+        <div class="border border-slate-200 rounded-lg overflow-hidden">
+          <div class="bg-slate-100 px-3 py-1.5 font-bold text-[11px] text-slate-800 border-b border-slate-200">
+            Ficha Técnica del Equipo Atendido
+          </div>
+          <div class="p-3 grid grid-cols-3 gap-2 bg-white">
+            <div><strong>Tipo:</strong> <br><span id="printEquipType" class="text-slate-700">-</span></div>
+            <div><strong>Marca:</strong> <br><span id="printEquipBrand" class="text-slate-700">-</span></div>
+            <div><strong>Serie / Modelo:</strong> <br><span id="printEquipSerial" class="text-slate-700">-</span></div>
+          </div>
+        </div>
+
+        <!-- DIAGNÓSTICO Y REPARACIÓN -->
+        <div class="grid grid-cols-2 gap-3">
+          <div class="border border-slate-200 p-3 rounded-lg">
+            <h5 class="font-bold text-[10px] text-slate-600 uppercase mb-1">Daño o Falla Reportada:</h5>
+            <p id="printEquipFault" class="text-slate-800 italic">-</p>
+          </div>
+          <div class="border border-slate-200 p-3 rounded-lg">
+            <h5 class="font-bold text-[10px] text-slate-600 uppercase mb-1">Reparación / Labor Ejecutada:</h5>
+            <p id="printEquipRepair" class="text-slate-800">-</p>
+          </div>
+        </div>
+
+        <!-- VALOR Y SELLO DE GARANTÍA -->
+        <div class="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-emerald-50 rounded-xl border border-blue-200">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-full bg-emerald-600 text-white flex items-center justify-center font-black text-xl shadow">
+              🛡️
+            </div>
+            <div>
+              <span class="font-black text-emerald-900 text-sm tracking-wide block">GARANTÍA DE SERVICIO: 3 MESES (90 DÍAS)</span>
+              <p class="text-[10px] text-slate-600">Válida y garantizada por ServiSmart SaaS hasta el: <strong id="printWarrantyDate" class="text-slate-900">10/12/2026</strong></p>
+            </div>
+          </div>
+          <div class="text-right">
+            <span class="text-[10px] text-slate-500 font-semibold block">Total a Pagar (COP):</span>
+            <span id="printOrderCost" class="text-xl font-black text-blue-900">$90.000 COP</span>
+          </div>
+        </div>
+
+        <!-- FIRMAS -->
+        <div class="grid grid-cols-2 gap-8 pt-6 border-t border-slate-200">
+          <div class="text-center">
+            <div class="border-b border-slate-400 w-48 mx-auto mb-1"></div>
+            <p class="font-bold text-[10px] text-slate-800">Firma Técnico Responsable</p>
+            <p class="text-[9px] text-slate-500">C.C. Personal Técnico Autorizado</p>
+          </div>
+          <div class="text-center">
+            <div class="border-b border-slate-400 w-48 mx-auto mb-1"></div>
+            <p class="font-bold text-[10px] text-slate-800">Firma Cliente a Satisfacción</p>
+            <p class="text-[9px] text-slate-500">Aceptación de Servicio y Garantía</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- BOTONES MODAL NO IMPRIMIBLES -->
+      <div class="p-3 bg-slate-100 border-t border-slate-200 flex justify-end gap-2">
+        <button onclick="closePrintModal()" class="px-4 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 transition">Cerrar</button>
+        <button onclick="window.print()" class="px-4 py-1.5 bg-blue-700 hover:bg-blue-600 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow">
+          <span>🖨️ Imprimir / Guardar PDF</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SCRIPT DE LÓGICA REACTIVA Y ESTADO -->
+  <script>
+    // ESTADO GLOBAL DE LA APLICACIÓN (MOCK DATA)
+    let technicians = [
+      { id: 1, name: "Carlos Mendoza", specialty: "Climatización / Aires Split", status: "disponible" },
+      { id: 2, name: "Javier Gómez", specialty: "Refrigeración y Centrales", status: "ocupado" },
+      { id: 3, name: "Andrés Silva", specialty: "Electrónica y Smart TVs", status: "disponible" }
+    ];
+
+    let orders = [
+      {
+        id: "OS-2026-0041",
+        clientName: "Dra. Marcela Restrepo",
+        clientPhone: "+57 310 456 7890",
+        clientAddress: "Cra 54 # 72-109, Prado",
+        equipType: "Aire Acondicionado Split 12000 BTU",
+        equipBrand: "LG Dual Inverter",
+        equipSerial: "LG-90234",
+        equipFault: "Falta de enfriamiento y filtro taponado con polvo",
+        equipRepair: "Mantenimiento profundo, limpieza de turbina y prueba de presión",
+        cost: 90000,
+        status: "completed",
+        techId: 1,
+        date: "2026-09-08",
+        completedDate: "2026-09-08"
+      },
+      {
+        id: "OS-2026-0042",
+        clientName: "Restaurante La Cabaña Express",
+        clientPhone: "+57 301 234 5678",
+        clientAddress: "Calle 84 # 47-30, Local 3",
+        equipType: "Aire Cassette 36000 BTU",
+        equipBrand: "Carrier",
+        equipSerial: "CR-77821",
+        equipFault: "Goteo constante en bandeja de condensado sobre mesas",
+        equipRepair: "Desobstrucción de línea de drenaje y limpieza de serpentín",
+        cost: 180000,
+        status: "in_progress",
+        techId: 2,
+        date: "2026-09-09",
+        completedDate: null
+      },
+      {
+        id: "OS-2026-0043",
+        clientName: "Edificio Torre Palma Real (Apt 502)",
+        clientPhone: "+57 315 789 1234",
+        clientAddress: "Calle 98 # 52-20, Apt 502",
+        equipType: "Smart TV 65\" OLED",
+        equipBrand: "Samsung",
+        equipSerial: "SAM-OLED65-44",
+        equipFault: "Líneas horizontales en pantalla y reinicio intermitente",
+        equipRepair: "Diagnóstico de tarjeta T-CON y fuente",
+        cost: 160000,
+        status: "scheduled",
+        techId: 3,
+        date: "2026-09-09",
+        completedDate: null
+      },
+      {
+        id: "OS-2026-0044",
+        clientName: "Roberto Manotas",
+        clientPhone: "+57 320 654 3210",
+        clientAddress: "Cra 43 # 68-12",
+        equipType: "Aire Acondicionado Split 18000 BTU",
+        equipBrand: "Mabe",
+        equipSerial: "NO_VISIBLE",
+        equipFault: "Enciende consola pero no arranca el compresor en condensadora",
+        equipRepair: "Por diagnosticar",
+        cost: 120000,
+        status: "new",
+        techId: null,
+        date: "2026-09-09",
+        completedDate: null
+      }
+    ];
+
+    // FORMATO DE MONEDA EN COP
+    function formatCOP(num) {
+      return "$" + num.toLocaleString("es-CO") + " COP";
+    }
+
+    // CALCULAR FECHA DE GARANTÍA (90 DÍAS)
+    function calcWarrantyDate(dateStr) {
+      if (!dateStr) return "N/A";
+      let d = new Date(dateStr);
+      d.setDate(d.getDate() + 90);
+      return d.toLocaleDateString("es-CO");
+    }
+
+    // RENDERIZAR TABLERO KANBAN Y MÉTRICAS
+    function renderApp() {
+      const q = document.getElementById("searchInput").value.toLowerCase().trim();
+
+      const filteredOrders = orders.filter(o => {
+        return o.clientName.toLowerCase().includes(q) ||
+               o.clientPhone.includes(q) ||
+               o.id.toLowerCase().includes(q) ||
+               o.equipBrand.toLowerCase().includes(q) ||
+               o.equipType.toLowerCase().includes(q);
+      });
+
+      // Contadores
+      const newOrders = filteredOrders.filter(o => o.status === "new");
+      const scheduledOrders = filteredOrders.filter(o => o.status === "scheduled");
+      const inProgressOrders = filteredOrders.filter(o => o.status === "in_progress");
+      const completedOrders = filteredOrders.filter(o => o.status === "completed");
+
+      // Actualizar badges de columnas
+      document.getElementById("colCount-new").innerText = newOrders.length;
+      document.getElementById("colCount-scheduled").innerText = scheduledOrders.length;
+      document.getElementById("colCount-in_progress").innerText = inProgressOrders.length;
+      document.getElementById("colCount-completed").innerText = completedOrders.length;
+
+      // Actualizar KPIs
+      document.getElementById("statNewOrders").innerText = newOrders.length;
+      document.getElementById("statScheduledToday").innerText = scheduledOrders.length;
+      const freeTechs = technicians.filter(t => t.status === "disponible").length;
+      document.getElementById("statAvailableTechs").innerText = `${freeTechs} / ${technicians.length}`;
+      document.getElementById("statActiveWarranties").innerText = completedOrders.length;
+
+      // Renderizar tarjetas por columna
+      renderColumn("colList-new", newOrders);
+      renderColumn("colList-scheduled", scheduledOrders);
+      renderColumn("colList-in_progress", inProgressOrders);
+      renderColumn("colList-completed", completedOrders);
+
+      // Renderizar alarmas
+      renderAlarmsList();
+    }
+
+    function renderColumn(colId, colOrders) {
+      const container = document.getElementById(colId);
+      if (colOrders.length === 0) {
+        container.innerHTML = `
+          <div class="py-8 text-center text-xs text-slate-500 border border-dashed border-slate-700/60 rounded-lg">
+            No hay órdenes aquí
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = colOrders.map(order => {
+        const tech = technicians.find(t => t.id === order.techId);
+        const techBadge = tech 
+          ? `<span class="bg-blue-950/80 text-blue-300 border border-blue-800 text-[10px] px-1.5 py-0.5 rounded font-medium">🧑‍🔧 ${tech.name}</span>`
+          : `<span class="bg-amber-950/80 text-amber-300 border border-amber-800 text-[10px] px-1.5 py-0.5 rounded font-medium">⚠️ Sin asignar</span>`;
+
+        const isWarranty = order.status === "completed";
+
+        return `
+          <div class="bg-[#1e293b] border ${isWarranty ? 'border-emerald-700/60' : 'border-slate-700'} rounded-xl p-3.5 shadow-md flex flex-col gap-2.5 hover:border-blue-500/60 transition group">
+            
+            <div class="flex items-start justify-between gap-2">
+              <span class="font-mono text-xs font-bold text-blue-400 bg-blue-950/60 px-1.5 py-0.5 rounded">${order.id}</span>
+              <span class="text-xs font-black text-emerald-400">${formatCOP(order.cost)}</span>
+            </div>
+
+            <div>
+              <h4 class="font-bold text-sm text-slate-100">${order.clientName}</h4>
+              <p class="text-[11px] text-slate-400 flex items-center gap-1">📍 ${order.clientAddress}</p>
+              <p class="text-[11px] text-cyan-400 flex items-center gap-1 cursor-pointer hover:underline" onclick="simulateWhatsApp('${order.clientPhone}', '${order.clientName}')">
+                📱 ${order.clientPhone}
+              </p>
+            </div>
+
+            <div class="bg-slate-900/90 rounded-lg p-2 border border-slate-800 text-[11px] space-y-1">
+              <div class="flex items-center justify-between text-slate-300">
+                <span class="font-semibold text-slate-200">❄️ ${order.equipType}</span>
+                <span class="text-[10px] bg-slate-800 text-slate-300 px-1 rounded">${order.equipBrand}</span>
+              </div>
+              <p class="text-slate-400 text-[10px] line-clamp-1"><strong>Falla:</strong> ${order.equipFault}</p>
+            </div>
+
+            ${isWarranty ? `
+              <div class="bg-emerald-950/40 border border-emerald-800/60 rounded-lg px-2 py-1 text-[10px] text-emerald-300 flex items-center justify-between font-medium">
+                <span>🛡️ Garantía 3M activa</span>
+                <span>Vence: ${calcWarrantyDate(order.completedDate)}</span>
+              </div>
+            ` : ''}
+
+            <div class="flex items-center justify-between pt-1 border-t border-slate-700/50 text-[11px]">
+              ${techBadge}
+              <div class="flex items-center gap-1">
+                <button onclick="openPrintModal('${order.id}')" title="Ver Orden / Ficha Técnica en PDF" class="p-1.5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded transition text-xs">
+                  📄
+                </button>
+                <button onclick="advanceOrderStatus('${order.id}')" title="Avanzar estado" class="px-2 py-1 bg-blue-600 hover:bg-blue-500 text-white rounded text-[10px] font-bold transition flex items-center gap-0.5">
+                  <span>Avanzar</span> →
+                </button>
+              </div>
+            </div>
+
+          </div>
+        `;
+      }).join("");
+    }
+
+    // AVANZAR ESTADO EN EL PIPELINE
+    function advanceOrderStatus(orderId) {
+      const order = orders.find(o => o.id === orderId);
+      if (!order) return;
+
+      if (order.status === "new") {
+        // Verificar técnico asignado
+        if (!order.techId) {
+          const freeTech = technicians.find(t => t.status === "disponible");
+          if (freeTech) {
+            order.techId = freeTech.id;
+            freeTech.status = "ocupado";
+            showToast(`Técnico ${freeTech.name} asignado automáticamente.`, "success");
+          }
+        }
+        order.status = "scheduled";
+        showToast(`Orden ${order.id} movida a Agendada.`, "info");
+      } else if (order.status === "scheduled") {
+        order.status = "in_progress";
+        showToast(`Orden ${order.id} marcada En Servicio.`, "info");
+      } else if (order.status === "in_progress") {
+        order.status = "completed";
+        order.completedDate = new Date().toISOString().split("T")[0];
+        
+        // Liberar técnico
+        const tech = technicians.find(t => t.id === order.techId);
+        if (tech) tech.status = "disponible";
+
+        showToast(`🎉 ¡Servicio completado! Se activó la Garantía de 3 Meses y 3 Alarmas.`, "success");
+      } else {
+        showToast(`La orden ya se encuentra Completada con Garantía Activa.`, "info");
+      }
+
+      renderApp();
+    }
+
+    // RENDERIZAR ALARMAS DE GARANTÍA
+    function renderAlarmsList() {
+      const container = document.getElementById("alarmsListContainer");
+      const completedOrders = orders.filter(o => o.status === "completed");
+
+      if (completedOrders.length === 0) {
+        container.innerHTML = `<p class="text-xs text-slate-500 text-center py-4">No hay garantías activas todavía.</p>`;
+        document.getElementById("alarmsCountBadge").innerText = "0";
+        return;
+      }
+
+      let totalAlarms = 0;
+      let html = "";
+
+      completedOrders.forEach(o => {
+        totalAlarms += 3;
+        const d1 = new Date(o.completedDate); d1.setDate(d1.getDate() + 1);
+        const d2 = new Date(o.completedDate); d2.setDate(d2.getDate() + 60);
+        const d3 = new Date(o.completedDate); d3.setDate(d3.getDate() + 85);
+
+        html += `
+          <div class="bg-slate-900 border border-slate-700/80 rounded-xl p-3 space-y-2">
+            <div class="flex items-center justify-between text-xs">
+              <span class="font-bold text-slate-200">Orden ${o.id} — ${o.clientName}</span>
+              <span class="text-blue-400 font-medium">${o.equipType}</span>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px]">
+              <div class="bg-slate-800/80 p-2 rounded border border-slate-700">
+                <span class="text-blue-400 font-bold block">1. Calidad (+24h)</span>
+                <span class="text-slate-400">${d1.toLocaleDateString("es-CO")}</span>
+                <button onclick="simulateWhatsApp('${o.clientPhone}', '${o.clientName}')" class="mt-1 text-[10px] text-cyan-300 underline block">Simular WhatsApp</button>
+              </div>
+              <div class="bg-slate-800/80 p-2 rounded border border-slate-700">
+                <span class="text-amber-400 font-bold block">2. Checkup (+60d)</span>
+                <span class="text-slate-400">${d2.toLocaleDateString("es-CO")}</span>
+                <span class="text-[10px] text-slate-400 block mt-1">Encuesta estado</span>
+              </div>
+              <div class="bg-slate-800/80 p-2 rounded border border-slate-700">
+                <span class="text-emerald-400 font-bold block">3. Cierre (+85d)</span>
+                <span class="text-slate-400">${d3.toLocaleDateString("es-CO")}</span>
+                <span class="text-[10px] text-emerald-300 block mt-1">Oferta Mantenimiento</span>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+      document.getElementById("alarmsCountBadge").innerText = totalAlarms;
+    }
+
+    // MODAL NUEVA ORDEN
+    function openNewOrderModal() {
+      // Poblar técnicos disponibles
+      const techSelect = document.getElementById("techSelect");
+      const availableTechs = technicians.filter(t => t.status === "disponible");
+      
+      techSelect.innerHTML = `
+        <option value="">Seleccione un técnico libre...</option>
+        ${availableTechs.map(t => `<option value="${t.id}">🟢 ${t.name} (${t.specialty})</option>`).join("")}
+        ${availableTechs.length === 0 ? '<option disabled value="">⚠️ No hay técnicos libres ahora</option>' : ''}
+      `;
+
+      document.getElementById("newOrderModal").classList.remove("hidden");
+    }
+
+    function closeNewOrderModal() {
+      document.getElementById("newOrderModal").classList.add("hidden");
+    }
+
+    function handleCreateOrder(e) {
+      e.preventDefault();
+      
+      const techIdVal = document.getElementById("techSelect").value;
+      const techId = techIdVal ? parseInt(techIdVal) : null;
+
+      const newOrder = {
+        id: "OS-2026-00" + (orders.length + 41),
+        clientName: document.getElementById("clientName").value,
+        clientPhone: document.getElementById("clientPhone").value,
+        clientAddress: document.getElementById("clientAddress").value,
+        equipType: document.getElementById("equipType").value,
+        equipBrand: document.getElementById("equipBrand").value,
+        equipSerial: document.getElementById("equipSerial").value || "NO_VISIBLE",
+        equipFault: document.getElementById("equipFault").value,
+        equipRepair: "Pendiente por revisión técnica",
+        cost: parseFloat(document.getElementById("orderCost").value) || 90000,
+        status: techId ? "scheduled" : "new",
+        techId: techId,
+        date: new Date().toISOString().split("T")[0],
+        completedDate: null
+      };
+
+      if (techId) {
+        const t = technicians.find(tech => tech.id === techId);
+        if (t) t.status = "ocupado";
+      }
+
+      orders.unshift(newOrder);
+      closeNewOrderModal();
+      document.getElementById("newOrderForm").reset();
+
+      showToast(`¡Orden ${newOrder.id} creada y ${techId ? 'agendada' : 'en espera de técnico'}!`, "success");
+      renderApp();
+    }
+
+    // MODAL ALARMAS
+    function openAlarmsModal() {
+      document.getElementById("alarmsModal").classList.remove("hidden");
+    }
+    function closeAlarmsModal() {
+      document.getElementById("alarmsModal").classList.add("hidden");
+    }
+
+    // MODAL ORDEN DE SERVICIO IMPRIMIBLE
+    function openPrintModal(orderId) {
+      const order = orders.find(o => o.id === orderId);
+      if (!order) return;
+
+      const tech = technicians.find(t => t.id === order.techId);
+
+      document.getElementById("printOrderCode").innerText = order.id;
+      document.getElementById("printOrderDate").innerText = order.date;
+      document.getElementById("printClientName").innerText = order.clientName;
+      document.getElementById("printClientPhone").innerText = order.clientPhone;
+      document.getElementById("printClientAddress").innerText = order.clientAddress;
+      document.getElementById("printTechName").innerText = tech ? tech.name : "Por Asignar";
+      document.getElementById("printOrderStatus").innerText = order.status.toUpperCase();
+      document.getElementById("printEquipType").innerText = order.equipType;
+      document.getElementById("printEquipBrand").innerText = order.equipBrand;
+      document.getElementById("printEquipSerial").innerText = order.equipSerial;
+      document.getElementById("printEquipFault").innerText = order.equipFault;
+      document.getElementById("printEquipRepair").innerText = order.equipRepair;
+      document.getElementById("printOrderCost").innerText = formatCOP(order.cost);
+      document.getElementById("printWarrantyDate").innerText = calcWarrantyDate(order.completedDate || order.date);
+
+      document.getElementById("printOrderModal").classList.remove("hidden");
+    }
+
+    function closePrintModal() {
+      document.getElementById("printOrderModal").classList.add("hidden");
+    }
+
+    // SIMULAR MENSAJE WHATSAPP
+    function simulateWhatsApp(phone, name) {
+      alert(`💬 SIMULACIÓN WHATSAPP:\n\nEnviando mensaje a ${name} (${phone}):\n\n"Hola, de parte de ServiSmart confirmamos tu cita técnica y te recordamos que cuentas con 3 meses de garantía en tu servicio de climatización."`);
+    }
+
+    // RESETEAR DATOS DE PRUEBA
+    function resetSeedData() {
+      if (confirm("¿Restablecer los datos iniciales de la demo?")) {
+        location.reload();
+      }
+    }
+
+    // SISTEMA TOAST
+    function showToast(msg, type = "info") {
+      const container = document.getElementById("toastContainer");
+      const toast = document.createElement("div");
+      const bg = type === "success" ? "bg-emerald-600" : "bg-blue-600";
+      toast.className = `${bg} text-white px-4 py-2.5 rounded-lg shadow-xl text-xs font-bold transition-all duration-300 transform translate-y-2 opacity-0 flex items-center gap-2`;
+      toast.innerHTML = `<span>🔔</span> <span>${msg}</span>`;
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.classList.remove("translate-y-2", "opacity-0");
+      }, 50);
+
+      setTimeout(() => {
+        toast.classList.add("opacity-0");
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
+    // INICIALIZAR
+    renderApp();
+  </script>
+
+</body>
+</html>
