@@ -1,0 +1,43 @@
+/* ==========================================================================
+   THEMO ServiSmart SaaS — Estilos Corporativos y Soporte de Impresión
+   ========================================================================== */
+
+/* Barra de scroll personalizada con azul THEMO */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.05);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(29, 78, 216, 0.25);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(29, 78, 216, 0.45);
+}
+
+/* Reglas de impresión para el recibo de 1 página (Ctrl + P) */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #printableOrderModalContent,
+  #printableOrderModalContent * {
+    visibility: visible;
+  }
+  #printableOrderModalContent {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 20px;
+    box-shadow: none;
+    border: none;
+  }
+}

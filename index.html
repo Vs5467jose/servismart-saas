@@ -4,19 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>THEMO ServiSmart SaaS — Plataforma de Gestión Técnica & Garantías</title>
+  
+  <!-- Dependencia de Tailwind CSS -->
   <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
-  <style>
-    /* Estilos personalizados THEMO */
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.05); }
-    ::-webkit-scrollbar-thumb { background: rgba(29, 78, 216, 0.25); border-radius: 9999px; }
-    
-    @media print {
-      body * { visibility: hidden; }
-      #printableOrderModalContent, #printableOrderModalContent * { visibility: visible; }
-      #printableOrderModalContent { position: absolute; left: 0; top: 0; width: 100%; box-shadow: none; border: none; }
-    }
-  </style>
+  
+  <!-- Hoja de Estilos Independiente -->
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 <body class="bg-[#f8fafc] text-slate-800 antialiased min-h-screen flex flex-col font-sans selection:bg-blue-600 selection:text-white">
 
@@ -24,7 +17,7 @@
   <div class="flex-1 flex flex-col md:flex-row min-h-screen">
 
     <!-- ========================================================================= -->
-    <!-- 1. SIDEBAR DE NAVEGACIÓN (IDÉNTICO A LA IMAGEN THEMO)                     -->
+    <!-- 1. SIDEBAR DE NAVEGACIÓN (THEMO)                                          -->
     <!-- ========================================================================= -->
     <aside class="w-full md:w-64 bg-white border-r border-slate-200 flex flex-col justify-between p-4 shadow-xs shrink-0 z-30">
       
@@ -44,30 +37,30 @@
 
         <!-- MENÚ DE NAVEGACIÓN -->
         <nav class="mt-5 space-y-1.5" id="sidebarNav">
-          <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition bg-blue-50 text-[#1d4ed8] border border-blue-100">
+          <button onclick="App.switchTab('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition bg-blue-50 text-[#1d4ed8] border border-blue-100">
             <span class="text-base">📊</span>
             <span>Dashboard</span>
           </button>
 
-          <button onclick="switchTab('clients')" id="nav-clients" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition border border-transparent">
+          <button onclick="App.switchTab('clients')" id="nav-clients" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition border border-transparent">
             <span class="text-base">👥</span>
             <span>Clientes</span>
             <span id="badgeClientCount" class="ml-auto text-[10px] bg-slate-100 text-slate-600 font-bold px-2 py-0.5 rounded-full">4</span>
           </button>
 
-          <button onclick="switchTab('technicians')" id="nav-technicians" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition border border-transparent">
+          <button onclick="App.switchTab('technicians')" id="nav-technicians" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition border border-transparent">
             <span class="text-base">🧑‍🔧</span>
             <span>Ficha de Técnicos</span>
             <span class="ml-auto w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
           </button>
 
-          <button onclick="switchTab('equipment')" id="nav-equipment" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition border border-transparent">
+          <button onclick="App.switchTab('equipment')" id="nav-equipment" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition border border-transparent">
             <span class="text-base">🛡️</span>
             <span>Equipos & Garantías</span>
             <span id="badgeWarrantyCount" class="ml-auto text-[10px] bg-blue-50 text-[#1d4ed8] font-bold px-2 py-0.5 rounded-full">1</span>
           </button>
 
-          <button onclick="openAlarmsModal()" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition border border-transparent">
+          <button onclick="App.openAlarmsModal()" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition border border-transparent">
             <span class="text-base">🔔</span>
             <span>Alarmas (3 Triggers)</span>
             <span id="sidebarAlarmsCount" class="ml-auto text-[10px] bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded-full">3</span>
@@ -75,7 +68,7 @@
         </nav>
       </div>
 
-      <!-- PERFIL RECEPCIÓN / INGENIERO LÍDER -->
+      <!-- PERFIL RECEPCIÓN -->
       <div class="pt-4 border-t border-slate-200">
         <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 flex items-center gap-3">
           <div class="w-9 h-9 rounded-full bg-[#1e293b] text-white flex items-center justify-center text-xs font-bold shadow-xs">
@@ -106,7 +99,7 @@
             <input 
               type="text" 
               id="searchInput" 
-              oninput="handleSearch()" 
+              oninput="App.render()" 
               placeholder="Buscar por cliente, WhatsApp, equipo o código de orden..." 
               class="w-full bg-slate-50 border border-slate-300 rounded-xl pl-10 pr-4 py-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#1d4ed8] focus:ring-2 focus:ring-blue-600/20 focus:bg-white transition shadow-2xs"
             />
@@ -119,7 +112,7 @@
         <!-- ACCIONES RÁPIDAS -->
         <div class="flex items-center gap-3">
           <button 
-            onclick="openAlarmsModal()" 
+            onclick="App.openAlarmsModal()" 
             class="relative bg-slate-100 hover:bg-slate-200 text-slate-700 px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition border border-slate-300"
           >
             <span>🔔</span>
@@ -127,9 +120,8 @@
             <span id="topbarAlarmsBadge" class="bg-[#1d4ed8] text-white font-bold text-[10px] px-1.5 py-0.2 rounded-full">3</span>
           </button>
 
-          <!-- BOTÓN PRINCIPAL (ABRE EL MODAL DE LA IMAGEN) -->
           <button 
-            onclick="openNewOrderModal()" 
+            onclick="App.openNewOrderModal()" 
             class="bg-[#1d4ed8] hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition shadow-md shadow-blue-700/30 hover:scale-[1.01] active:scale-[0.99]"
           >
             <span class="text-sm font-black">+</span>
@@ -142,12 +134,10 @@
       <!-- VISTAS INTERCAMBIABLES POR PESTAÑA -->
       <main class="flex-1 p-6 overflow-y-auto">
 
-        <!-- ========================================================================= -->
-        <!-- PESTAÑA 1: DASHBOARD / KANBAN                                             -->
-        <!-- ========================================================================= -->
+        <!-- PESTAÑA 1: DASHBOARD / KANBAN -->
         <div id="tab-dashboard" class="space-y-6">
           
-          <!-- BARRA DE KPIS OPERATIVOS -->
+          <!-- KPIS -->
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
             <div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-xs flex items-center justify-between hover:border-blue-400 transition">
               <div>
@@ -194,19 +184,17 @@
             </div>
           </div>
 
-          <!-- TABLERO KANBAN DE 4 FASES -->
+          <!-- TABLERO KANBAN -->
           <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
             <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
               <div>
                 <h2 class="text-sm font-bold text-slate-900 tracking-tight">Tablero Operativo de Órdenes de Servicio (Pipeline Kanban)</h2>
                 <p class="text-xs text-slate-500">Flujo completo de atención de servicios particulares y activación de garantías.</p>
               </div>
-              <button onclick="openNewOrderModal()" class="text-xs text-[#1d4ed8] hover:underline font-bold">+ Crear orden</button>
+              <button onclick="App.openNewOrderModal()" class="text-xs text-[#1d4ed8] hover:underline font-bold">+ Crear orden</button>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-start">
-              
-              <!-- COLUMNA 1: NUEVA SOLICITUD -->
               <div class="bg-slate-100/90 border border-slate-200 rounded-xl p-3 flex flex-col gap-3 min-h-[440px]">
                 <div class="flex items-center justify-between pb-2 border-b border-slate-300">
                   <div class="flex items-center gap-2">
@@ -218,7 +206,6 @@
                 <div id="colList-new" class="flex flex-col gap-3"></div>
               </div>
 
-              <!-- COLUMNA 2: AGENDADA -->
               <div class="bg-slate-100/90 border border-slate-200 rounded-xl p-3 flex flex-col gap-3 min-h-[440px]">
                 <div class="flex items-center justify-between pb-2 border-b border-slate-300">
                   <div class="flex items-center gap-2">
@@ -230,7 +217,6 @@
                 <div id="colList-scheduled" class="flex flex-col gap-3"></div>
               </div>
 
-              <!-- COLUMNA 3: EN SERVICIO -->
               <div class="bg-slate-100/90 border border-slate-200 rounded-xl p-3 flex flex-col gap-3 min-h-[440px]">
                 <div class="flex items-center justify-between pb-2 border-b border-slate-300">
                   <div class="flex items-center gap-2">
@@ -242,7 +228,6 @@
                 <div id="colList-in_progress" class="flex flex-col gap-3"></div>
               </div>
 
-              <!-- COLUMNA 4: COMPLETADA / GARANTÍA ACTIVA -->
               <div class="bg-slate-100/90 border border-slate-200 rounded-xl p-3 flex flex-col gap-3 min-h-[440px]">
                 <div class="flex items-center justify-between pb-2 border-b border-slate-300">
                   <div class="flex items-center gap-2">
@@ -253,15 +238,12 @@
                 </div>
                 <div id="colList-completed" class="flex flex-col gap-3"></div>
               </div>
-
             </div>
           </div>
 
         </div>
 
-        <!-- ========================================================================= -->
-        <!-- PESTAÑA 2: CLIENTES                                                       -->
-        <!-- ========================================================================= -->
+        <!-- PESTAÑA 2: CLIENTES -->
         <div id="tab-clients" class="hidden space-y-5">
           <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
             <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-200">
@@ -269,7 +251,7 @@
                 <h2 class="text-base font-bold text-slate-900">Directorio de Clientes Registrados</h2>
                 <p class="text-xs text-slate-500">Base de datos de clientes particulares para servicios técnicos.</p>
               </div>
-              <button onclick="openNewOrderModal()" class="bg-[#1d4ed8] text-white px-3.5 py-1.5 rounded-xl text-xs font-bold shadow-xs hover:bg-blue-700 transition">
+              <button onclick="App.openNewOrderModal()" class="bg-[#1d4ed8] text-white px-3.5 py-1.5 rounded-xl text-xs font-bold shadow-xs hover:bg-blue-700 transition">
                 + Nuevo Cliente & Orden
               </button>
             </div>
@@ -286,41 +268,33 @@
                     <th class="p-3 text-right">Acción</th>
                   </tr>
                 </thead>
-                <tbody id="clientsTableBody" class="divide-y divide-slate-100">
-                  <!-- Se llena dinámicamente -->
-                </tbody>
+                <tbody id="clientsTableBody" class="divide-y divide-slate-100"></tbody>
               </table>
             </div>
           </div>
         </div>
 
-        <!-- ========================================================================= -->
-        <!-- PESTAÑA 3: FICHA DE TÉCNICOS                                              -->
-        <!-- ========================================================================= -->
+        <!-- PESTAÑA 3: FICHA DE TÉCNICOS -->
         <div id="tab-technicians" class="hidden space-y-5">
           <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
             <div class="pb-4 border-b border-slate-200 flex items-center justify-between">
               <div>
                 <h2 class="text-base font-bold text-slate-900">Personal Técnico Autorizado</h2>
-                <p class="text-xs text-slate-500">Monitoreo de estado de disponibilidad en tiempo real para asignación.</p>
+                <p class="text-xs text-slate-500">Monitoreo de disponibilidad en tiempo real para despacho.</p>
               </div>
-              <span class="text-xs text-slate-500 font-medium">Haz clic en el estado para cambiarlo manualmente</span>
+              <span class="text-xs text-slate-500 font-medium">Haz clic en el botón inferior para alternar disponibilidad</span>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5" id="techCardsContainer">
-              <!-- Se llena dinámicamente -->
-            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5" id="techCardsContainer"></div>
           </div>
         </div>
 
-        <!-- ========================================================================= -->
-        <!-- PESTAÑA 4: EQUIPOS & GARANTÍAS                                            -->
-        <!-- ========================================================================= -->
+        <!-- PESTAÑA 4: EQUIPOS & GARANTÍAS -->
         <div id="tab-equipment" class="hidden space-y-5">
           <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
             <div class="pb-4 border-b border-slate-200">
               <h2 class="text-base font-bold text-slate-900">Monitoreo de Equipos & Garantías de 3 Meses</h2>
-              <p class="text-xs text-slate-500">Historial técnico de aires acondicionados, TVs y electrodomésticos con vigencia de 90 días.</p>
+              <p class="text-xs text-slate-500">Historial técnico con cálculo de vigencia de 90 días calendario.</p>
             </div>
 
             <div class="overflow-x-auto mt-4">
@@ -335,9 +309,7 @@
                     <th class="p-3">Estado Alarma</th>
                   </tr>
                 </thead>
-                <tbody id="equipmentTableBody" class="divide-y divide-slate-100">
-                  <!-- Se llena dinámicamente -->
-                </tbody>
+                <tbody id="equipmentTableBody" class="divide-y divide-slate-100"></tbody>
               </table>
             </div>
           </div>
@@ -352,17 +324,13 @@
   <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
   <!-- ========================================================================= -->
-  <!-- MODAL PRINCIPAL: NUEVA ORDEN DE SERVICIO TÉCNICO (IDÉNTICO A LA IMAGEN)   -->
+  <!-- MODAL: NUEVA ORDEN DE SERVICIO (IDÉNTICO A LA IMAGEN)                     -->
   <!-- ========================================================================= -->
   <div id="newOrderModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white border-2 border-slate-300 rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-150">
       
-      <!-- CABECERA CON EMBLEMA OFICIAL THEMO (COMO EN LA IMAGEN) -->
       <div class="px-6 pt-5 pb-3 border-b border-slate-200 flex flex-col items-center justify-center relative bg-gradient-to-b from-slate-50 to-white">
-        
-        <button onclick="closeNewOrderModal()" class="absolute right-4 top-4 text-slate-400 hover:text-slate-800 text-2xl font-bold p-1 leading-none">&times;</button>
-        
-        <!-- Isotipo THEMO de engranaje -->
+        <button onclick="App.closeNewOrderModal()" class="absolute right-4 top-4 text-slate-400 hover:text-slate-800 text-2xl font-bold p-1 leading-none">&times;</button>
         <div class="flex items-center gap-2 mb-1">
           <div class="w-9 h-9 rounded-xl bg-[#1e293b] text-white flex items-center justify-center text-base font-bold shadow-sm">
             ⚙️
@@ -372,8 +340,7 @@
         <h3 class="text-base font-bold text-slate-900">Nueva Orden de Servicio Técnico</h3>
       </div>
 
-      <!-- CUERPO DEL FORMULARIO CON LAS 3 SECCIONES EXACTAS -->
-      <form id="newOrderForm" onsubmit="handleCreateOrder(event)" class="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
+      <form id="newOrderForm" onsubmit="App.handleCreateOrder(event)" class="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
         
         <!-- SECCIÓN 1: DETALLES DEL CLIENTE -->
         <div>
@@ -423,20 +390,14 @@
           </div>
         </div>
 
-        <!-- SECCIÓN 3: ASIGNACIÓN Y COBRO (CON SELECTOR COLOREADO Y PRECIO COP) -->
+        <!-- SECCIÓN 3: ASIGNACIÓN Y COBRO -->
         <div class="pt-3 border-t border-slate-200">
           <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-2">Sección 3: Asignación y Cobro</h4>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            
-            <!-- SELECTOR DE TÉCNICO COLOREADO -->
             <div>
               <label class="block text-xs font-semibold text-slate-700 mb-1">Asignación de Técnico *</label>
-              <select id="techSelect" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:border-[#1d4ed8] focus:ring-1 focus:ring-blue-600/20 focus:outline-none font-medium">
-                <!-- Se pobla dinámicamente con los estados 🟢, 🔵, 🔴 -->
-              </select>
+              <select id="techSelect" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:border-[#1d4ed8] focus:ring-1 focus:ring-blue-600/20 focus:outline-none font-medium"></select>
             </div>
-
-            <!-- COBRO CON VALOR EN COP Y BOTONES RÁPIDOS -->
             <div>
               <label class="block text-xs font-semibold text-slate-700 mb-1">Cobro Estimado</label>
               <div class="flex items-center gap-3">
@@ -444,19 +405,17 @@
                 <input type="hidden" id="orderCost" value="90000">
               </div>
               <div class="flex gap-2 mt-2">
-                <button type="button" onclick="setQuickPrice(80000)" class="price-btn text-xs font-bold px-3 py-1 rounded-lg border border-slate-200 bg-slate-100 text-slate-700 hover:bg-blue-50 hover:text-[#1d4ed8] hover:border-blue-300 transition">$80.000</button>
-                <button type="button" onclick="setQuickPrice(90000)" class="price-btn text-xs font-bold px-3 py-1 rounded-lg border border-blue-600 bg-[#1d4ed8] text-white shadow-xs transition">$90.000</button>
-                <button type="button" onclick="setQuickPrice(100000)" class="price-btn text-xs font-bold px-3 py-1 rounded-lg border border-slate-200 bg-slate-100 text-slate-700 hover:bg-blue-50 hover:text-[#1d4ed8] hover:border-blue-300 transition">$100.000</button>
-                <button type="button" onclick="setQuickPrice(180000)" class="price-btn text-xs font-bold px-3 py-1 rounded-lg border border-slate-200 bg-slate-100 text-slate-700 hover:bg-blue-50 hover:text-[#1d4ed8] hover:border-blue-300 transition">$180.000</button>
+                <button type="button" onclick="App.setQuickPrice(80000)" class="price-btn text-xs font-bold px-3 py-1 rounded-lg border border-slate-200 bg-slate-100 text-slate-700 hover:bg-blue-50 hover:text-[#1d4ed8] hover:border-blue-300 transition">$80.000</button>
+                <button type="button" onclick="App.setQuickPrice(90000)" class="price-btn text-xs font-bold px-3 py-1 rounded-lg border border-blue-600 bg-[#1d4ed8] text-white shadow-xs transition">$90.000</button>
+                <button type="button" onclick="App.setQuickPrice(100000)" class="price-btn text-xs font-bold px-3 py-1 rounded-lg border border-slate-200 bg-slate-100 text-slate-700 hover:bg-blue-50 hover:text-[#1d4ed8] hover:border-blue-300 transition">$100.000</button>
+                <button type="button" onclick="App.setQuickPrice(180000)" class="price-btn text-xs font-bold px-3 py-1 rounded-lg border border-slate-200 bg-slate-100 text-slate-700 hover:bg-blue-50 hover:text-[#1d4ed8] hover:border-blue-300 transition">$180.000</button>
               </div>
             </div>
-
           </div>
         </div>
 
-        <!-- BOTONES DE ACCIÓN INFERIORES -->
         <div class="pt-5 border-t border-slate-200 flex items-center justify-end gap-3">
-          <button type="button" onclick="closeNewOrderModal()" class="px-6 py-2.5 rounded-xl text-xs font-bold text-slate-700 bg-slate-200 hover:bg-slate-300 transition">Cancelar</button>
+          <button type="button" onclick="App.closeNewOrderModal()" class="px-6 py-2.5 rounded-xl text-xs font-bold text-slate-700 bg-slate-200 hover:bg-slate-300 transition">Cancelar</button>
           <button type="submit" class="px-6 py-2.5 rounded-xl text-xs font-bold text-white bg-[#1d4ed8] hover:bg-blue-700 transition shadow-md shadow-blue-700/30">Guardar y Agendar Cita</button>
         </div>
 
@@ -465,23 +424,18 @@
     </div>
   </div>
 
-  <!-- ========================================================================= -->
-  <!-- MODAL DE ALARMAS DE GARANTÍA (3 NIVELES: +24h, +60d, +85d)               -->
-  <!-- ========================================================================= -->
+  <!-- MODAL: ALARMAS DE GARANTÍA -->
   <div id="alarmsModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white border border-slate-200 rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl">
-      
       <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
         <div class="flex items-center gap-2.5">
-          <div class="w-8 h-8 rounded-lg bg-[#1d4ed8] text-white flex items-center justify-center text-sm font-bold">
-            🛡️
-          </div>
+          <div class="w-8 h-8 rounded-lg bg-[#1d4ed8] text-white flex items-center justify-center text-sm font-bold">🛡️</div>
           <div>
             <h3 class="text-sm font-bold text-slate-900">Motor de Alarmas de Garantía (90 Días / 3 Meses)</h3>
             <p class="text-[11px] text-slate-500">Ciclo de post-venta para fidelización y control de calidad.</p>
           </div>
         </div>
-        <button onclick="closeAlarmsModal()" class="text-slate-400 hover:text-slate-700 text-xl font-bold p-1 leading-none">&times;</button>
+        <button onclick="App.closeAlarmsModal()" class="text-slate-400 hover:text-slate-700 text-xl font-bold p-1 leading-none">&times;</button>
       </div>
 
       <div class="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
@@ -499,32 +453,22 @@
             <span class="text-[10px] text-slate-600">Oferta Mantenimiento</span>
           </div>
         </div>
-
-        <div class="space-y-2.5" id="alarmsListContainer">
-          <!-- Se llena dinámicamente -->
-        </div>
+        <div class="space-y-2.5" id="alarmsListContainer"></div>
       </div>
 
       <div class="px-6 py-3 bg-slate-50 border-t border-slate-200 flex justify-end">
-        <button onclick="closeAlarmsModal()" class="px-4 py-2 bg-slate-200 text-slate-800 rounded-xl text-xs font-bold hover:bg-slate-300 transition">Cerrar</button>
+        <button onclick="App.closeAlarmsModal()" class="px-4 py-2 bg-slate-200 text-slate-800 rounded-xl text-xs font-bold hover:bg-slate-300 transition">Cerrar</button>
       </div>
-
     </div>
   </div>
 
-  <!-- ========================================================================= -->
-  <!-- MODAL RECIBO IMPRIMIBLE (PDF 1 PÁGINA)                                    -->
-  <!-- ========================================================================= -->
+  <!-- MODAL: RECIBO IMPRIMIBLE PDF -->
   <div id="printOrderModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white text-slate-900 rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
-      
       <div id="printableOrderModalContent" class="p-8 bg-white overflow-y-auto space-y-5 text-xs text-slate-800 font-sans">
-        
         <div class="flex items-center justify-between border-b-2 border-slate-900 pb-4">
           <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-lg bg-[#1e293b] text-white flex items-center justify-center font-bold text-xl">
-              ⚙️
-            </div>
+            <div class="w-10 h-10 rounded-lg bg-[#1e293b] text-white flex items-center justify-center font-bold text-xl">⚙️</div>
             <div>
               <h2 class="text-xl font-black tracking-tight text-slate-900">
                 <span class="text-[#1d4ed8]">THE</span><span>MO</span> SERVISMART
@@ -580,9 +524,7 @@
 
         <div class="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 via-slate-50 to-white rounded-2xl border border-blue-200">
           <div class="flex items-center gap-3">
-            <div class="w-11 h-11 rounded-full bg-[#1d4ed8] text-white flex items-center justify-center font-black text-lg shadow-xs">
-              🛡️
-            </div>
+            <div class="w-11 h-11 rounded-full bg-[#1d4ed8] text-white flex items-center justify-center font-black text-lg shadow-xs">🛡️</div>
             <div>
               <span class="font-black text-slate-900 text-sm tracking-wide block">GARANTÍA CERTIFICADA: 3 MESES (90 DÍAS)</span>
               <p class="text-[10px] text-slate-600">Válida y garantizada por THEMO ServiSmart hasta: <strong id="printWarrantyDate" class="text-slate-900">10/12/2026</strong></p>
@@ -606,629 +548,23 @@
             <p class="text-[9px] text-slate-500">Aceptación de Servicio y Garantía</p>
           </div>
         </div>
-
       </div>
 
       <div class="p-3 bg-slate-50 border-t border-slate-200 flex justify-end gap-2">
-        <button onclick="closePrintModal()" class="px-4 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 transition">Cerrar</button>
+        <button onclick="App.closePrintModal()" class="px-4 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 transition">Cerrar</button>
         <button onclick="window.print()" class="px-4 py-1.5 bg-[#1d4ed8] hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs">
           <span>🖨️ Imprimir / Guardar PDF</span>
         </button>
       </div>
-
     </div>
   </div>
 
-  <!-- ========================================================================= -->
-  <!-- LÓGICA JAVASCRIPT COMPLETA Y REACTIVA (THEMO SAAS ENGINE)                 -->
-  <!-- ========================================================================= -->
-  <script>
-    // 1. ESTADO GLOBAL: TÉCNICOS (CON ESTADOS DISPONIBLE / EN CITA / NO DISPONIBLE)
-    let technicians = [
-      { id: 1, name: "Carlos Mendoza", specialty: "Climatización (HVAC)", status: "disponible", phone: "+57 301 555 1122" },
-      { id: 2, name: "Ana García", specialty: "Electrodomésticos", status: "en_cita", phone: "+57 302 444 3344" },
-      { id: 3, name: "Pedro Ruiz", specialty: "Refrigeración", status: "no_disponible", phone: "+57 300 777 8899" }
-    ];
-
-    // 2. ESTADO GLOBAL: ÓRDENES DE SERVICIO
-    let orders = [
-      {
-        id: "OS-2026-0041",
-        clientName: "Dra. Marcela Restrepo",
-        clientPhone: "+57 310 456 7890",
-        clientAddress: "Cra 54 # 72-109, Prado",
-        equipType: "HVAC - Aire Acondicionado Split",
-        equipBrand: "LG Dual Inverter",
-        equipSerial: "LG-90234",
-        equipFault: "Falta de enfriamiento y filtro taponado con polvo",
-        equipRepair: "Mantenimiento profundo, limpieza de turbina y prueba de presión",
-        cost: 90000,
-        status: "completed",
-        techId: 1,
-        date: "2026-09-08",
-        completedDate: "2026-09-08"
-      },
-      {
-        id: "OS-2026-0042",
-        clientName: "Restaurante La Cabaña Express",
-        clientPhone: "+57 301 234 5678",
-        clientAddress: "Calle 84 # 47-30, Local 3",
-        equipType: "HVAC - Aire Cassette / Central",
-        equipBrand: "Carrier",
-        equipSerial: "CR-77821",
-        equipFault: "Goteo constante en bandeja de condensado sobre mesas",
-        equipRepair: "Desobstrucción de línea de drenaje y limpieza de serpentín",
-        cost: 180000,
-        status: "in_progress",
-        techId: 2,
-        date: "2026-09-09",
-        completedDate: null
-      },
-      {
-        id: "OS-2026-0043",
-        clientName: "Edificio Torre Palma Real (Apt 502)",
-        clientPhone: "+57 315 789 1234",
-        clientAddress: "Calle 98 # 52-20, Apt 502",
-        equipType: "Electrodoméstico - Smart TV",
-        equipBrand: "Samsung",
-        equipSerial: "SAM-OLED65-44",
-        equipFault: "Líneas horizontales en pantalla y reinicio intermitente",
-        equipRepair: "Diagnóstico de tarjeta T-CON y fuente",
-        cost: 160000,
-        status: "scheduled",
-        techId: 1,
-        date: "2026-09-09",
-        completedDate: null
-      },
-      {
-        id: "OS-2026-0044",
-        clientName: "Roberto Manotas",
-        clientPhone: "+57 320 654 3210",
-        clientAddress: "Cra 43 # 68-12",
-        equipType: "HVAC - Aire Acondicionado Split",
-        equipBrand: "Mabe",
-        equipSerial: "NO_VISIBLE",
-        equipFault: "Enciende consola pero no arranca el compresor en condensadora",
-        equipRepair: "Por diagnosticar",
-        cost: 120000,
-        status: "new",
-        techId: null,
-        date: "2026-09-09",
-        completedDate: null
-      }
-    ];
-
-    let currentTab = "dashboard";
-
-    // UTILIDADES DE FORMATO
-    function formatCOP(num) {
-      return "$" + Number(num).toLocaleString("es-CO") + " COP";
-    }
-
-    function calcWarrantyDate(dateStr) {
-      if (!dateStr) return "N/A";
-      let d = new Date(dateStr);
-      d.setDate(d.getDate() + 90);
-      return d.toLocaleDateString("es-CO");
-    }
-
-    // CAMBIO DE PESTAÑAS (SIDEBAR)
-    function switchTab(tabName) {
-      currentTab = tabName;
-      
-      const tabs = ["dashboard", "clients", "technicians", "equipment"];
-      tabs.forEach(t => {
-        const el = document.getElementById("tab-" + t);
-        const btn = document.getElementById("nav-" + t);
-        if (el) el.classList.toggle("hidden", t !== tabName);
-        if (btn) {
-          if (t === tabName) {
-            btn.className = "nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition bg-blue-50 text-[#1d4ed8] border border-blue-100";
-          } else {
-            btn.className = "nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition border border-transparent";
-          }
-        }
-      });
-
-      renderApp();
-    }
-
-    // RENDER PRINCIPAL
-    function renderApp() {
-      const q = document.getElementById("searchInput").value.toLowerCase().trim();
-
-      const filteredOrders = orders.filter(o => {
-        return o.clientName.toLowerCase().includes(q) ||
-               o.clientPhone.includes(q) ||
-               o.id.toLowerCase().includes(q) ||
-               o.equipBrand.toLowerCase().includes(q) ||
-               o.equipType.toLowerCase().includes(q);
-      });
-
-      // KPIs
-      const newOrders = filteredOrders.filter(o => o.status === "new");
-      const scheduledOrders = filteredOrders.filter(o => o.status === "scheduled");
-      const inProgressOrders = filteredOrders.filter(o => o.status === "in_progress");
-      const completedOrders = filteredOrders.filter(o => o.status === "completed");
-
-      document.getElementById("colCount-new").innerText = newOrders.length;
-      document.getElementById("colCount-scheduled").innerText = scheduledOrders.length;
-      document.getElementById("colCount-in_progress").innerText = inProgressOrders.length;
-      document.getElementById("colCount-completed").innerText = completedOrders.length;
-
-      document.getElementById("statNewOrders").innerText = newOrders.length;
-      document.getElementById("statScheduledToday").innerText = scheduledOrders.length;
-      const freeTechs = technicians.filter(t => t.status === "disponible").length;
-      document.getElementById("statAvailableTechs").innerText = `${freeTechs} / ${technicians.length}`;
-      document.getElementById("statActiveWarranties").innerText = completedOrders.length;
-
-      // Renderizar columnas Kanban
-      renderColumn("colList-new", newOrders);
-      renderColumn("colList-scheduled", scheduledOrders);
-      renderColumn("colList-in_progress", inProgressOrders);
-      renderColumn("colList-completed", completedOrders);
-
-      // Renderizar otras vistas
-      renderClientsTable();
-      renderTechCards();
-      renderEquipmentTable();
-      renderAlarmsList();
-    }
-
-    // RENDER COLUMNAS KANBAN
-    function renderColumn(colId, colOrders) {
-      const container = document.getElementById(colId);
-      if (colOrders.length === 0) {
-        container.innerHTML = `
-          <div class="py-8 text-center text-xs text-slate-400 border border-dashed border-slate-300 rounded-xl bg-white/60">
-            No hay órdenes en esta fase
-          </div>
-        `;
-        return;
-      }
-
-      container.innerHTML = colOrders.map(order => {
-        const tech = technicians.find(t => t.id === order.techId);
-        let techBadge = `<span class="bg-amber-50 text-amber-800 border border-amber-200 text-[10px] px-2 py-0.5 rounded-full font-medium">⚠️ Sin asignar</span>`;
-        if (tech) {
-          if (tech.status === "disponible") {
-            techBadge = `<span class="bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] px-2 py-0.5 rounded-full font-semibold flex items-center gap-1">🟢 ${tech.name}</span>`;
-          } else if (tech.status === "en_cita") {
-            techBadge = `<span class="bg-blue-50 text-blue-800 border border-blue-200 text-[10px] px-2 py-0.5 rounded-full font-semibold flex items-center gap-1">🔵 ${tech.name}</span>`;
-          } else {
-            techBadge = `<span class="bg-slate-100 text-slate-800 border border-slate-300 text-[10px] px-2 py-0.5 rounded-full font-semibold flex items-center gap-1">🔴 ${tech.name}</span>`;
-          }
-        }
-
-        const isWarranty = order.status === "completed";
-
-        return `
-          <div class="bg-white border ${isWarranty ? 'border-blue-400 shadow-blue-500/10' : 'border-slate-200'} rounded-2xl p-4 shadow-xs flex flex-col gap-2.5 hover:border-[#1d4ed8] hover:shadow-md transition group">
-            
-            <div class="flex items-start justify-between gap-2">
-              <span class="font-mono text-xs font-bold text-[#1d4ed8] bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-md">${order.id}</span>
-              <span class="text-xs font-black text-slate-900">${formatCOP(order.cost)}</span>
-            </div>
-
-            <div>
-              <h4 class="font-bold text-sm text-slate-900 leading-tight">${order.clientName}</h4>
-              <p class="text-[11px] text-slate-500 flex items-center gap-1 mt-0.5">📍 ${order.clientAddress}</p>
-              <p class="text-[11px] text-[#1d4ed8] font-semibold flex items-center gap-1 cursor-pointer hover:underline mt-0.5" onclick="simulateWhatsApp('${order.clientPhone}', '${order.clientName}')">
-                📱 ${order.clientPhone}
-              </p>
-            </div>
-
-            <div class="bg-slate-50 rounded-xl p-2.5 border border-slate-200 text-[11px] space-y-1">
-              <div class="flex items-center justify-between text-slate-700">
-                <span class="font-bold text-slate-900">❄️ ${order.equipType}</span>
-                <span class="text-[10px] bg-white border border-slate-200 text-slate-600 px-1.5 py-0.2 rounded font-medium">${order.equipBrand}</span>
-              </div>
-              <p class="text-slate-500 text-[10px] line-clamp-1"><strong>Falla:</strong> ${order.equipFault}</p>
-            </div>
-
-            ${isWarranty ? `
-              <div class="bg-blue-50 border border-blue-200 rounded-xl px-2.5 py-1 text-[10px] text-blue-900 flex items-center justify-between font-bold">
-                <span>🛡️ Garantía 3M Activa</span>
-                <span>Vence: ${calcWarrantyDate(order.completedDate)}</span>
-              </div>
-            ` : ''}
-
-            <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-[11px]">
-              ${techBadge}
-              <div class="flex items-center gap-1.5">
-                <button onclick="openPrintModal('${order.id}')" title="Ver Orden / Ficha Técnica en PDF" class="p-1.5 text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 rounded-lg transition text-xs">
-                  📄
-                </button>
-                <button onclick="advanceOrderStatus('${order.id}')" title="Avanzar de fase" class="px-2.5 py-1 bg-[#1d4ed8] hover:bg-blue-700 text-white rounded-lg text-[10px] font-bold transition flex items-center gap-1 shadow-2xs">
-                  <span>Avanzar</span> →
-                </button>
-              </div>
-            </div>
-
-          </div>
-        `;
-      }).join("");
-    }
-
-    // PESTAÑA: TABLA DE CLIENTES
-    function renderClientsTable() {
-      const tbody = document.getElementById("clientsTableBody");
-      if (!tbody) return;
-
-      const clientMap = {};
-      orders.forEach(o => {
-        if (!clientMap[o.clientPhone]) {
-          clientMap[o.clientPhone] = {
-            name: o.clientName,
-            phone: o.clientPhone,
-            address: o.clientAddress,
-            orderCount: 1,
-            hasWarranty: o.status === "completed"
-          };
-        } else {
-          clientMap[o.clientPhone].orderCount++;
-          if (o.status === "completed") clientMap[o.clientPhone].hasWarranty = true;
-        }
-      });
-
-      const clientList = Object.values(clientMap);
-      document.getElementById("badgeClientCount").innerText = clientList.length;
-
-      tbody.innerHTML = clientList.map(c => `
-        <tr class="hover:bg-slate-50/80 transition">
-          <td class="p-3 font-bold text-slate-900">${c.name}</td>
-          <td class="p-3 text-[#1d4ed8] font-semibold cursor-pointer hover:underline" onclick="simulateWhatsApp('${c.phone}', '${c.name}')">${c.phone}</td>
-          <td class="p-3 text-slate-600">${c.address}</td>
-          <td class="p-3 font-semibold text-slate-800">${c.orderCount} orden(es)</td>
-          <td class="p-3">
-            ${c.hasWarranty 
-              ? '<span class="bg-blue-50 text-[#1d4ed8] border border-blue-200 px-2 py-0.5 rounded-full text-[10px] font-bold">🛡️ Activa</span>' 
-              : '<span class="text-slate-400 text-[11px]">—</span>'}
-          </td>
-          <td class="p-3 text-right">
-            <button onclick="openNewOrderModalForClient('${c.name}', '${c.phone}', '${c.address}')" class="text-xs text-[#1d4ed8] hover:underline font-bold">+ Nueva Cita</button>
-          </td>
-        </tr>
-      `).join("");
-    }
-
-    // PESTAÑA: FICHA DE TÉCNICOS
-    function renderTechCards() {
-      const container = document.getElementById("techCardsContainer");
-      if (!container) return;
-
-      container.innerHTML = technicians.map(t => {
-        let statusBadge = "";
-        let btnText = "";
-        if (t.status === "disponible") {
-          statusBadge = `<span class="bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1.5">🟢 Disponible (Libre)</span>`;
-          btnText = "Marcar en Cita";
-        } else if (t.status === "en_cita") {
-          statusBadge = `<span class="bg-blue-50 text-blue-800 border border-blue-200 text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1.5">🔵 En Cita de Servicio</span>`;
-          btnText = "Marcar No Disponible";
-        } else {
-          statusBadge = `<span class="bg-slate-100 text-slate-800 border border-slate-300 text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1.5">🔴 No Disponible</span>`;
-          btnText = "Marcar Disponible";
-        }
-
-        const activeOrder = orders.find(o => o.techId === t.id && (o.status === "scheduled" || o.status === "in_progress"));
-
-        return `
-          <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs flex flex-col justify-between gap-4">
-            <div>
-              <div class="flex items-center justify-between mb-3">
-                <div class="w-12 h-12 rounded-2xl bg-slate-100 text-slate-800 font-black text-lg flex items-center justify-center border border-slate-200">
-                  🧑‍🔧
-                </div>
-                ${statusBadge}
-              </div>
-
-              <h4 class="font-bold text-base text-slate-900">${t.name}</h4>
-              <p class="text-xs text-[#1d4ed8] font-semibold">${t.specialty}</p>
-              <p class="text-xs text-slate-500 mt-1">📱 ${t.phone}</p>
-
-              <div class="mt-4 p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs">
-                <p class="text-slate-500 font-semibold text-[10px] uppercase">Servicio Actual:</p>
-                <p class="font-bold text-slate-800 mt-0.5">${activeOrder ? `${activeOrder.id} - ${activeOrder.clientName}` : 'Sin cita activa en este momento'}</p>
-              </div>
-            </div>
-
-            <button onclick="toggleTechStatus(${t.id})" class="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-bold transition border border-slate-200">
-              🔄 ${btnText}
-            </button>
-          </div>
-        `;
-      }).join("");
-    }
-
-    // CAMBIAR ESTADO DE TÉCNICO
-    function toggleTechStatus(techId) {
-      const tech = technicians.find(t => t.id === techId);
-      if (!tech) return;
-
-      if (tech.status === "disponible") {
-        tech.status = "en_cita";
-      } else if (tech.status === "en_cita") {
-        tech.status = "no_disponible";
-      } else {
-        tech.status = "disponible";
-      }
-
-      showToast(`Estado de ${tech.name} actualizado.`, "info");
-      renderApp();
-    }
-
-    // PESTAÑA: EQUIPOS & GARANTÍAS
-    function renderEquipmentTable() {
-      const tbody = document.getElementById("equipmentTableBody");
-      if (!tbody) return;
-
-      tbody.innerHTML = orders.map(o => {
-        const isWarranty = o.status === "completed";
-        return `
-          <tr class="hover:bg-slate-50/80 transition">
-            <td class="p-3 font-mono font-bold text-[#1d4ed8]">${o.id}</td>
-            <td class="p-3 font-bold text-slate-900">${o.equipType} (${o.equipBrand})</td>
-            <td class="p-3 font-mono text-slate-600">${o.equipSerial}</td>
-            <td class="p-3 text-slate-700">${o.clientName}</td>
-            <td class="p-3">
-              ${isWarranty 
-                ? `<span class="font-bold text-emerald-700">${calcWarrantyDate(o.completedDate)} (90 días)</span>` 
-                : '<span class="text-slate-400">En proceso de atención</span>'}
-            </td>
-            <td class="p-3">
-              ${isWarranty 
-                ? '<span class="bg-blue-50 text-[#1d4ed8] font-bold text-[10px] px-2 py-0.5 rounded-full border border-blue-200">3 Alarmas Activas</span>'
-                : '<span class="text-slate-400 text-xs">Sin alarma aún</span>'}
-            </td>
-          </tr>
-        `;
-      }).join("");
-    }
-
-    // AVANZAR ESTADO DE UNA ORDEN
-    function advanceOrderStatus(orderId) {
-      const order = orders.find(o => o.id === orderId);
-      if (!order) return;
-
-      if (order.status === "new") {
-        if (!order.techId) {
-          const freeTech = technicians.find(t => t.status === "disponible");
-          if (freeTech) {
-            order.techId = freeTech.id;
-            freeTech.status = "en_cita";
-            showToast(`Técnico ${freeTech.name} asignado automáticamente.`, "success");
-          }
-        }
-        order.status = "scheduled";
-        showToast(`Orden ${order.id} agendada formalmente.`, "info");
-      } else if (order.status === "scheduled") {
-        order.status = "in_progress";
-        showToast(`Orden ${order.id} marcada En Servicio.`, "info");
-      } else if (order.status === "in_progress") {
-        order.status = "completed";
-        order.completedDate = new Date().toISOString().split("T")[0];
-        
-        const tech = technicians.find(t => t.id === order.techId);
-        if (tech) tech.status = "disponible";
-
-        showToast(`🎉 ¡Servicio completado! Se activó la Garantía de 3 Meses y las 3 Alarmas.`, "success");
-      } else {
-        showToast(`La orden ya se encuentra Completada con Garantía Activa.`, "info");
-      }
-
-      renderApp();
-    }
-
-    // MOTOR DE ALARMAS
-    function renderAlarmsList() {
-      const container = document.getElementById("alarmsListContainer");
-      const completedOrders = orders.filter(o => o.status === "completed");
-
-      document.getElementById("badgeWarrantyCount").innerText = completedOrders.length;
-
-      if (completedOrders.length === 0) {
-        container.innerHTML = `<p class="text-xs text-slate-500 text-center py-4">No hay garantías activas todavía.</p>`;
-        document.getElementById("alarmsCountBadge").innerText = "0";
-        document.getElementById("topbarAlarmsBadge").innerText = "0";
-        document.getElementById("sidebarAlarmsCount").innerText = "0";
-        return;
-      }
-
-      let totalAlarms = completedOrders.length * 3;
-      document.getElementById("alarmsCountBadge").innerText = totalAlarms;
-      document.getElementById("topbarAlarmsBadge").innerText = totalAlarms;
-      document.getElementById("sidebarAlarmsCount").innerText = totalAlarms;
-
-      let html = "";
-      completedOrders.forEach(o => {
-        const d1 = new Date(o.completedDate); d1.setDate(d1.getDate() + 1);
-        const d2 = new Date(o.completedDate); d2.setDate(d2.getDate() + 60);
-        const d3 = new Date(o.completedDate); d3.setDate(d3.getDate() + 85);
-
-        html += `
-          <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3.5 space-y-2">
-            <div class="flex items-center justify-between text-xs">
-              <span class="font-bold text-slate-900">${o.id} — ${o.clientName}</span>
-              <span class="text-[#1d4ed8] font-semibold">${o.equipType}</span>
-            </div>
-            
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px]">
-              <div class="bg-white p-2.5 rounded-xl border border-slate-200">
-                <span class="text-[#1d4ed8] font-bold block">1. Calidad (+24h)</span>
-                <span class="text-slate-600 font-medium">${d1.toLocaleDateString("es-CO")}</span>
-                <button onclick="simulateWhatsApp('${o.clientPhone}', '${o.clientName}')" class="mt-1 text-[10px] text-blue-600 underline font-semibold block">Simular WhatsApp</button>
-              </div>
-              <div class="bg-white p-2.5 rounded-xl border border-slate-200">
-                <span class="text-slate-800 font-bold block">2. Checkup (+60d)</span>
-                <span class="text-slate-600 font-medium">${d2.toLocaleDateString("es-CO")}</span>
-                <span class="text-[10px] text-slate-500 block mt-1">Encuesta estado</span>
-              </div>
-              <div class="bg-white p-2.5 rounded-xl border border-slate-200">
-                <span class="text-[#1d4ed8] font-bold block">3. Cierre (+85d)</span>
-                <span class="text-slate-600 font-medium">${d3.toLocaleDateString("es-CO")}</span>
-                <span class="text-[10px] text-blue-700 font-semibold block mt-1">Oferta Mantenimiento</span>
-              </div>
-            </div>
-          </div>
-        `;
-      });
-
-      container.innerHTML = html;
-    }
-
-    // MODAL NUEVA ORDEN (POBLA EL SELECTOR CON ESTADOS VERDE, AZUL Y ROJO)
-    function openNewOrderModal() {
-      const techSelect = document.getElementById("techSelect");
-      
-      let optionsHtml = '<option value="">Seleccione un técnico...</option>';
-      
-      technicians.forEach(t => {
-        if (t.status === "disponible") {
-          optionsHtml += `<option value="${t.id}">🟢 ${t.name} - ${t.specialty} (Libre)</option>`;
-        } else if (t.status === "en_cita") {
-          optionsHtml += `<option value="${t.id}">🔵 ${t.name} - ${t.specialty} (En Cita)</option>`;
-        } else {
-          optionsHtml += `<option value="${t.id}" disabled>🔴 ${t.name} - ${t.specialty} (No Disponible)</option>`;
-        }
-      });
-
-      techSelect.innerHTML = optionsHtml;
-      document.getElementById("newOrderModal").classList.remove("hidden");
-    }
-
-    function openNewOrderModalForClient(name, phone, address) {
-      openNewOrderModal();
-      document.getElementById("clientName").value = name;
-      document.getElementById("clientPhone").value = phone;
-      document.getElementById("clientAddress").value = address;
-    }
-
-    function closeNewOrderModal() {
-      document.getElementById("newOrderModal").classList.add("hidden");
-    }
-
-    // BOTONES RÁPIDOS DE PRECIO
-    function setQuickPrice(val) {
-      document.getElementById("orderCost").value = val;
-      document.getElementById("displayPriceLabel").innerText = formatCOP(val);
-
-      const buttons = document.querySelectorAll(".price-btn");
-      buttons.forEach(btn => {
-        if (btn.innerText.includes(val.toLocaleString("es-CO"))) {
-          btn.className = "price-btn text-xs font-bold px-3 py-1 rounded-lg border border-blue-600 bg-[#1d4ed8] text-white shadow-xs transition";
-        } else {
-          btn.className = "price-btn text-xs font-bold px-3 py-1 rounded-lg border border-slate-200 bg-slate-100 text-slate-700 hover:bg-blue-50 hover:text-[#1d4ed8] hover:border-blue-300 transition";
-        }
-      });
-    }
-
-    // CREACIÓN DE ORDEN
-    function handleCreateOrder(e) {
-      e.preventDefault();
-      
-      const techIdVal = document.getElementById("techSelect").value;
-      const techId = techIdVal ? parseInt(techIdVal) : null;
-
-      const newOrder = {
-        id: "OS-2026-00" + (orders.length + 41),
-        clientName: document.getElementById("clientName").value,
-        clientPhone: document.getElementById("clientPhone").value,
-        clientAddress: document.getElementById("clientAddress").value,
-        equipType: document.getElementById("equipType").value,
-        equipBrand: document.getElementById("equipBrand").value,
-        equipSerial: document.getElementById("equipSerial").value || "NO_VISIBLE",
-        equipFault: document.getElementById("equipFault").value,
-        equipRepair: "Pendiente por revisión técnica",
-        cost: parseFloat(document.getElementById("orderCost").value) || 90000,
-        status: techId ? "scheduled" : "new",
-        techId: techId,
-        date: new Date().toISOString().split("T")[0],
-        completedDate: null
-      };
-
-      if (techId) {
-        const t = technicians.find(tech => tech.id === techId);
-        if (t && t.status === "disponible") t.status = "en_cita";
-      }
-
-      orders.unshift(newOrder);
-      closeNewOrderModal();
-      document.getElementById("newOrderForm").reset();
-
-      showToast(`¡Orden ${newOrder.id} creada y ${techId ? 'agendada' : 'en espera de técnico'}!`, "success");
-      renderApp();
-    }
-
-    // MODAL DE ALARMAS
-    function openAlarmsModal() {
-      document.getElementById("alarmsModal").classList.remove("hidden");
-    }
-    function closeAlarmsModal() {
-      document.getElementById("alarmsModal").classList.add("hidden");
-    }
-
-    // MODAL IMPRESIÓN PDF
-    function openPrintModal(orderId) {
-      const order = orders.find(o => o.id === orderId);
-      if (!order) return;
-
-      const tech = technicians.find(t => t.id === order.techId);
-
-      document.getElementById("printOrderCode").innerText = order.id;
-      document.getElementById("printOrderDate").innerText = order.date;
-      document.getElementById("printClientName").innerText = order.clientName;
-      document.getElementById("printClientPhone").innerText = order.clientPhone;
-      document.getElementById("printClientAddress").innerText = order.clientAddress;
-      document.getElementById("printTechName").innerText = tech ? tech.name : "Por Asignar";
-      document.getElementById("printOrderStatus").innerText = order.status.toUpperCase();
-      document.getElementById("printEquipType").innerText = order.equipType;
-      document.getElementById("printEquipBrand").innerText = order.equipBrand;
-      document.getElementById("printEquipSerial").innerText = order.equipSerial;
-      document.getElementById("printEquipFault").innerText = order.equipFault;
-      document.getElementById("printEquipRepair").innerText = order.equipRepair;
-      document.getElementById("printOrderCost").innerText = formatCOP(order.cost);
-      document.getElementById("printWarrantyDate").innerText = calcWarrantyDate(order.completedDate || order.date);
-
-      document.getElementById("printOrderModal").classList.remove("hidden");
-    }
-
-    function closePrintModal() {
-      document.getElementById("printOrderModal").classList.add("hidden");
-    }
-
-    // BÚSQUEDA
-    function handleSearch() {
-      renderApp();
-    }
-
-    // SIMULACIÓN DE WHATSAPP
-    function simulateWhatsApp(phone, name) {
-      alert(`💬 SIMULACIÓN WHATSAPP THEMO:\n\nEnviando mensaje a ${name} (${phone}):\n\n"Hola, de parte de THEMO ServiSmart confirmamos tu cita técnica y te recordamos que cuentas con 3 meses de garantía oficial en tu servicio."`);
-    }
-
-    // NOTIFICACIÓN TOAST
-    function showToast(msg, type = "info") {
-      const container = document.getElementById("toastContainer");
-      const toast = document.createElement("div");
-      const bg = type === "success" ? "bg-[#1d4ed8]" : "bg-[#1e293b]";
-      toast.className = `${bg} text-white px-4 py-2.5 rounded-xl shadow-xl text-xs font-bold transition-all duration-300 transform translate-y-2 opacity-0 flex items-center gap-2 border border-white/10`;
-      toast.innerHTML = `<span>🔔</span> <span>${msg}</span>`;
-      container.appendChild(toast);
-
-      setTimeout(() => {
-        toast.classList.remove("translate-y-2", "opacity-0");
-      }, 50);
-
-      setTimeout(() => {
-        toast.classList.add("opacity-0");
-        setTimeout(() => toast.remove(), 300);
-      }, 3500);
-    }
-
-    // INICIALIZACIÓN
-    renderApp();
-  </script>
+  <!-- CARGA DE MÓDULOS JAVASCRIPT SEPARADOS POR RESPONSABILIDAD -->
+  <script src="js/state.js"></script>
+  <script src="js/warrantyEngine.js"></script>
+  <script src="js/techManager.js"></script>
+  <script src="js/uiRenderer.js"></script>
+  <script src="js/app.js"></script>
 
 </body>
 </html>
