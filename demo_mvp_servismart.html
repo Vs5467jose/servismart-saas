@@ -3,13 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>THEMO ServiSmart — Plataforma de Gestión Técnica & Garantías</title>
+  <title>THEMO ServiSmart SaaS — Plataforma de Gestión Técnica & Garantías</title>
   <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
   <style>
     /* Estilos personalizados THEMO */
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.05); }
-    ::-webkit-scrollbar-thumb { background: rgba(29, 78, 216, 0.3); border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb { background: rgba(29, 78, 216, 0.25); border-radius: 9999px; }
+    
     @media print {
       body * { visibility: hidden; }
       #printableOrderModalContent, #printableOrderModalContent * { visibility: visible; }
@@ -19,295 +20,444 @@
 </head>
 <body class="bg-[#f8fafc] text-slate-800 antialiased min-h-screen flex flex-col font-sans selection:bg-blue-600 selection:text-white">
 
-  <!-- HEADER PRINCIPAL (THEMO: BLANCO, AZUL COBALTO & GRAFITO ACERO) -->
-  <header class="bg-white border-b border-slate-200 sticky top-0 z-40 px-5 py-3 shadow-xs">
-    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+  <!-- CONTENEDOR PRINCIPAL: SIDEBAR + ÁREA DE TRABAJO -->
+  <div class="flex-1 flex flex-col md:flex-row min-h-screen">
+
+    <!-- ========================================================================= -->
+    <!-- 1. SIDEBAR DE NAVEGACIÓN (IDÉNTICO A LA IMAGEN THEMO)                     -->
+    <!-- ========================================================================= -->
+    <aside class="w-full md:w-64 bg-white border-r border-slate-200 flex flex-col justify-between p-4 shadow-xs shrink-0 z-30">
       
-      <!-- LOGO THEMO & TITULO -->
-      <div class="flex items-center gap-3">
-        <!-- Icono Engranaje / Pirámide THEMO -->
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#1e293b] via-[#1d4ed8] to-[#2563eb] flex items-center justify-center text-white font-black text-lg shadow-md shadow-blue-600/20 border border-slate-300">
-          ⚙️
-        </div>
-        <div>
-          <div class="flex items-center gap-2">
-            <h1 class="font-black text-xl text-slate-900 tracking-tight flex items-center">
+      <div>
+        <!-- LOGOTIPO OFICIAL THEMO -->
+        <div class="flex items-center gap-3 pb-6 border-b border-slate-200">
+          <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-[#1e293b] via-[#1d4ed8] to-[#2563eb] flex items-center justify-center text-white font-black text-xl shadow-md shadow-blue-600/20 border border-slate-300">
+            ⚙️
+          </div>
+          <div>
+            <h1 class="font-black text-xl text-slate-900 tracking-tight leading-tight flex items-center">
               <span class="text-[#1d4ed8]">THE</span><span class="text-[#1e293b]">MO</span>
-              <span class="ml-2 text-xs font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200 uppercase tracking-wide">ServiSmart</span>
             </h1>
-            <span class="bg-slate-100 text-slate-700 text-[11px] px-2.5 py-0.5 rounded-full border border-slate-200 font-semibold flex items-center gap-1.5">
-              <span class="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse"></span> Sistema Operativo
-            </span>
+            <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">ServiSmart SaaS</p>
           </div>
-          <p class="text-xs text-slate-500 font-medium">Gestión de Clientes, Agendamiento & Garantías a 3 Meses</p>
+        </div>
+
+        <!-- MENÚ DE NAVEGACIÓN -->
+        <nav class="mt-5 space-y-1.5" id="sidebarNav">
+          <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition bg-blue-50 text-[#1d4ed8] border border-blue-100">
+            <span class="text-base">📊</span>
+            <span>Dashboard</span>
+          </button>
+
+          <button onclick="switchTab('clients')" id="nav-clients" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition border border-transparent">
+            <span class="text-base">👥</span>
+            <span>Clientes</span>
+            <span id="badgeClientCount" class="ml-auto text-[10px] bg-slate-100 text-slate-600 font-bold px-2 py-0.5 rounded-full">4</span>
+          </button>
+
+          <button onclick="switchTab('technicians')" id="nav-technicians" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition border border-transparent">
+            <span class="text-base">🧑‍🔧</span>
+            <span>Ficha de Técnicos</span>
+            <span class="ml-auto w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          </button>
+
+          <button onclick="switchTab('equipment')" id="nav-equipment" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition border border-transparent">
+            <span class="text-base">🛡️</span>
+            <span>Equipos & Garantías</span>
+            <span id="badgeWarrantyCount" class="ml-auto text-[10px] bg-blue-50 text-[#1d4ed8] font-bold px-2 py-0.5 rounded-full">1</span>
+          </button>
+
+          <button onclick="openAlarmsModal()" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition border border-transparent">
+            <span class="text-base">🔔</span>
+            <span>Alarmas (3 Triggers)</span>
+            <span id="sidebarAlarmsCount" class="ml-auto text-[10px] bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded-full">3</span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- PERFIL RECEPCIÓN / INGENIERO LÍDER -->
+      <div class="pt-4 border-t border-slate-200">
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 flex items-center gap-3">
+          <div class="w-9 h-9 rounded-full bg-[#1e293b] text-white flex items-center justify-center text-xs font-bold shadow-xs">
+            ADM
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-xs font-bold text-slate-900 truncate">Recepción Principal</p>
+            <p class="text-[10px] text-emerald-600 font-medium flex items-center gap-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> En línea (Operativo)
+            </p>
+          </div>
         </div>
       </div>
 
-      <!-- BUSCADOR UNIVERSAL -->
-      <div class="flex-1 max-w-md min-w-[240px]">
-        <div class="relative">
-          <input 
-            type="text" 
-            id="searchInput" 
-            oninput="renderApp()" 
-            placeholder="Buscar por cliente, WhatsApp, placa o marca..." 
-            class="w-full bg-slate-50 border border-slate-300 rounded-lg pl-9 pr-4 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#1d4ed8] focus:ring-2 focus:ring-blue-600/20 focus:bg-white transition"
-          />
-          <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-          </svg>
-        </div>
-      </div>
+    </aside>
 
-      <!-- ACCIONES PRINCIPALES -->
-      <div class="flex items-center gap-2.5">
-        <button 
-          onclick="openAlarmsModal()" 
-          class="relative bg-slate-100 hover:bg-slate-200/80 border border-slate-300 text-slate-700 px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 transition shadow-xs"
-        >
-          <span class="text-base">🔔</span>
-          <span>Alarmas de Garantía</span>
-          <span id="alarmsCountBadge" class="bg-[#1d4ed8] text-white font-bold text-[10px] px-1.5 py-0.2 rounded-full">3</span>
-        </button>
-
-        <button 
-          onclick="openNewOrderModal()" 
-          class="bg-[#1d4ed8] hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-1.5 transition shadow-md shadow-blue-700/30 hover:scale-[1.02] active:scale-[0.98]"
-        >
-          <span class="text-base font-bold">+</span>
-          <span>Nueva Orden (30s)</span>
-        </button>
-      </div>
-
-    </div>
-  </header>
-
-  <!-- CONTENEDOR PRINCIPAL -->
-  <main class="max-w-7xl mx-auto w-full p-5 flex-1 flex flex-col gap-6">
-
-    <!-- BARRA DE MÉTRICAS OPERATIVAS (KPIS) -->
-    <section class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-      <div class="bg-white border border-slate-200 p-4 rounded-xl shadow-xs flex items-center justify-between hover:border-blue-400 transition">
-        <div>
-          <p class="text-xs font-medium text-slate-500">Citas Agendadas Hoy</p>
-          <h3 id="statScheduledToday" class="text-2xl font-black text-slate-900 mt-1">1</h3>
-          <span class="text-[11px] text-[#1d4ed8] font-semibold">1 pendiente de atención</span>
-        </div>
-        <div class="w-11 h-11 rounded-lg bg-blue-50 border border-blue-200 flex items-center justify-center text-xl">
-          📅
-        </div>
-      </div>
-
-      <div class="bg-white border border-slate-200 p-4 rounded-xl shadow-xs flex items-center justify-between hover:border-amber-400 transition">
-        <div>
-          <p class="text-xs font-medium text-slate-500">Nuevas Solicitudes</p>
-          <h3 id="statNewOrders" class="text-2xl font-black text-amber-600 mt-1">1</h3>
-          <span class="text-[11px] text-amber-600 font-semibold">Por asignar técnico</span>
-        </div>
-        <div class="w-11 h-11 rounded-lg bg-amber-50 border border-amber-200 flex items-center justify-center text-xl">
-          ⚡
-        </div>
-      </div>
-
-      <div class="bg-white border border-slate-200 p-4 rounded-xl shadow-xs flex items-center justify-between hover:border-blue-400 transition">
-        <div>
-          <p class="text-xs font-medium text-slate-500">Técnicos Libres</p>
-          <h3 id="statAvailableTechs" class="text-2xl font-black text-[#1d4ed8] mt-1">2 / 3</h3>
-          <span class="text-[11px] text-emerald-600 font-semibold">🟢 Listos para despacho</span>
-        </div>
-        <div class="w-11 h-11 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center text-xl">
-          🧑‍🔧
-        </div>
-      </div>
-
-      <div class="bg-white border border-slate-200 p-4 rounded-xl shadow-xs flex items-center justify-between hover:border-blue-400 transition">
-        <div>
-          <p class="text-xs font-medium text-slate-500">Garantías Activas (3 Meses)</p>
-          <h3 id="statActiveWarranties" class="text-2xl font-black text-[#1e293b] mt-1">1</h3>
-          <span class="text-[11px] text-blue-600 font-semibold">🛡️ Protección automatizada</span>
-        </div>
-        <div class="w-11 h-11 rounded-lg bg-blue-50 border border-blue-200 flex items-center justify-center text-xl">
-          🛡️
-        </div>
-      </div>
-    </section>
-
-    <!-- BANNER DE CONTEXTO TÉCNICO THEMO -->
-    <div class="bg-white border border-slate-200 rounded-xl p-3.5 flex flex-wrap items-center justify-between gap-3 text-xs shadow-xs">
-      <div class="flex items-center gap-2.5">
-        <span class="px-2.5 py-0.5 rounded bg-[#1e293b] text-white font-bold text-[10px] tracking-wide uppercase">Identidad THEMO</span>
-        <span class="text-slate-700 font-medium">Paleta corporativa en Blanco, Azul Cobalto (#1D4ED8) y Grafito Titanio con datos simulados en Pesos Colombianos (COP).</span>
-      </div>
-      <div class="flex items-center gap-2">
-        <button onclick="resetSeedData()" class="text-xs text-blue-700 hover:text-blue-900 underline font-semibold">Restablecer datos</button>
-      </div>
-    </div>
-
-    <!-- PIPELINE KANBAN DE ÓRDENES DE SERVICIO -->
-    <section class="flex-1 flex flex-col">
-      <div class="flex items-center justify-between mb-3">
-        <h2 class="text-xs font-bold tracking-wider uppercase text-slate-600 flex items-center gap-2">
-          <span>Tablero Operativo de la Secretaría (Pipeline de Servicios)</span>
-          <span class="text-xs font-normal text-slate-400">(Mueve las tarjetas entre estados)</span>
-        </h2>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 flex-1 items-start">
+    <!-- ========================================================================= -->
+    <!-- 2. ÁREA DE TRABAJO PRINCIPAL                                              -->
+    <!-- ========================================================================= -->
+    <div class="flex-1 flex flex-col min-w-0">
+      
+      <!-- TOPBAR SUPERIOR -->
+      <header class="bg-white border-b border-slate-200 sticky top-0 z-20 px-6 py-3.5 flex flex-wrap items-center justify-between gap-4 shadow-xs">
         
-        <!-- COLUMNA 1: NUEVA SOLICITUD -->
-        <div class="bg-slate-100/90 border border-slate-200 rounded-xl p-3 flex flex-col gap-3 min-h-[420px]">
-          <div class="flex items-center justify-between pb-2 border-b border-slate-300">
-            <div class="flex items-center gap-2">
-              <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
-              <span class="font-bold text-xs uppercase tracking-wider text-slate-700">1. Nueva Solicitud</span>
-            </div>
-            <span id="colCount-new" class="bg-white text-slate-700 text-xs px-2 py-0.5 rounded-full font-bold shadow-xs border border-slate-200">1</span>
+        <!-- BUSCADOR UNIVERSAL -->
+        <div class="flex-1 max-w-lg min-w-[240px]">
+          <div class="relative">
+            <input 
+              type="text" 
+              id="searchInput" 
+              oninput="handleSearch()" 
+              placeholder="Buscar por cliente, WhatsApp, equipo o código de orden..." 
+              class="w-full bg-slate-50 border border-slate-300 rounded-xl pl-10 pr-4 py-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#1d4ed8] focus:ring-2 focus:ring-blue-600/20 focus:bg-white transition shadow-2xs"
+            />
+            <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
           </div>
-          <div id="colList-new" class="flex flex-col gap-3"></div>
         </div>
 
-        <!-- COLUMNA 2: AGENDADA / ASIGNADA -->
-        <div class="bg-slate-100/90 border border-slate-200 rounded-xl p-3 flex flex-col gap-3 min-h-[420px]">
-          <div class="flex items-center justify-between pb-2 border-b border-slate-300">
-            <div class="flex items-center gap-2">
-              <span class="w-2.5 h-2.5 rounded-full bg-[#1d4ed8]"></span>
-              <span class="font-bold text-xs uppercase tracking-wider text-slate-700">2. Agendada</span>
-            </div>
-            <span id="colCount-scheduled" class="bg-white text-slate-700 text-xs px-2 py-0.5 rounded-full font-bold shadow-xs border border-slate-200">1</span>
-          </div>
-          <div id="colList-scheduled" class="flex flex-col gap-3"></div>
+        <!-- ACCIONES RÁPIDAS -->
+        <div class="flex items-center gap-3">
+          <button 
+            onclick="openAlarmsModal()" 
+            class="relative bg-slate-100 hover:bg-slate-200 text-slate-700 px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition border border-slate-300"
+          >
+            <span>🔔</span>
+            <span>Alarmas</span>
+            <span id="topbarAlarmsBadge" class="bg-[#1d4ed8] text-white font-bold text-[10px] px-1.5 py-0.2 rounded-full">3</span>
+          </button>
+
+          <!-- BOTÓN PRINCIPAL (ABRE EL MODAL DE LA IMAGEN) -->
+          <button 
+            onclick="openNewOrderModal()" 
+            class="bg-[#1d4ed8] hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition shadow-md shadow-blue-700/30 hover:scale-[1.01] active:scale-[0.99]"
+          >
+            <span class="text-sm font-black">+</span>
+            <span>Nueva Orden de Servicio</span>
+          </button>
         </div>
 
-        <!-- COLUMNA 3: EN SERVICIO -->
-        <div class="bg-slate-100/90 border border-slate-200 rounded-xl p-3 flex flex-col gap-3 min-h-[420px]">
-          <div class="flex items-center justify-between pb-2 border-b border-slate-300">
-            <div class="flex items-center gap-2">
-              <span class="w-2.5 h-2.5 rounded-full bg-[#1e293b]"></span>
-              <span class="font-bold text-xs uppercase tracking-wider text-slate-700">3. En Servicio</span>
+      </header>
+
+      <!-- VISTAS INTERCAMBIABLES POR PESTAÑA -->
+      <main class="flex-1 p-6 overflow-y-auto">
+
+        <!-- ========================================================================= -->
+        <!-- PESTAÑA 1: DASHBOARD / KANBAN                                             -->
+        <!-- ========================================================================= -->
+        <div id="tab-dashboard" class="space-y-6">
+          
+          <!-- BARRA DE KPIS OPERATIVOS -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-xs flex items-center justify-between hover:border-blue-400 transition">
+              <div>
+                <p class="text-xs font-medium text-slate-500">Citas de Hoy</p>
+                <h3 id="statScheduledToday" class="text-2xl font-black text-slate-900 mt-1">1</h3>
+                <span class="text-[11px] text-[#1d4ed8] font-semibold">1 en horario asignado</span>
+              </div>
+              <div class="w-11 h-11 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center text-xl">
+                📅
+              </div>
             </div>
-            <span id="colCount-in_progress" class="bg-white text-slate-700 text-xs px-2 py-0.5 rounded-full font-bold shadow-xs border border-slate-200">1</span>
+
+            <div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-xs flex items-center justify-between hover:border-amber-400 transition">
+              <div>
+                <p class="text-xs font-medium text-slate-500">Nuevas Solicitudes</p>
+                <h3 id="statNewOrders" class="text-2xl font-black text-amber-600 mt-1">1</h3>
+                <span class="text-[11px] text-amber-600 font-semibold">Esperando asignación</span>
+              </div>
+              <div class="w-11 h-11 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center text-xl">
+                ⚡
+              </div>
+            </div>
+
+            <div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-xs flex items-center justify-between hover:border-emerald-400 transition">
+              <div>
+                <p class="text-xs font-medium text-slate-500">Técnicos Libres</p>
+                <h3 id="statAvailableTechs" class="text-2xl font-black text-emerald-700 mt-1">2 / 3</h3>
+                <span class="text-[11px] text-emerald-600 font-semibold">🟢 Listos para despacho</span>
+              </div>
+              <div class="w-11 h-11 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-xl">
+                🧑‍🔧
+              </div>
+            </div>
+
+            <div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-xs flex items-center justify-between hover:border-blue-400 transition">
+              <div>
+                <p class="text-xs font-medium text-slate-500">Garantías Activas 3M</p>
+                <h3 id="statActiveWarranties" class="text-2xl font-black text-[#1e293b] mt-1">1</h3>
+                <span class="text-[11px] text-[#1d4ed8] font-semibold">🛡️ Monitoreo continuo</span>
+              </div>
+              <div class="w-11 h-11 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-xl">
+                🛡️
+              </div>
+            </div>
           </div>
-          <div id="colList-in_progress" class="flex flex-col gap-3"></div>
+
+          <!-- TABLERO KANBAN DE 4 FASES -->
+          <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
+            <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+              <div>
+                <h2 class="text-sm font-bold text-slate-900 tracking-tight">Tablero Operativo de Órdenes de Servicio (Pipeline Kanban)</h2>
+                <p class="text-xs text-slate-500">Flujo completo de atención de servicios particulares y activación de garantías.</p>
+              </div>
+              <button onclick="openNewOrderModal()" class="text-xs text-[#1d4ed8] hover:underline font-bold">+ Crear orden</button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-start">
+              
+              <!-- COLUMNA 1: NUEVA SOLICITUD -->
+              <div class="bg-slate-100/90 border border-slate-200 rounded-xl p-3 flex flex-col gap-3 min-h-[440px]">
+                <div class="flex items-center justify-between pb-2 border-b border-slate-300">
+                  <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                    <span class="font-bold text-xs uppercase tracking-wider text-slate-700">1. Nueva Solicitud</span>
+                  </div>
+                  <span id="colCount-new" class="bg-white text-slate-700 text-xs px-2 py-0.5 rounded-full font-bold shadow-xs border border-slate-200">1</span>
+                </div>
+                <div id="colList-new" class="flex flex-col gap-3"></div>
+              </div>
+
+              <!-- COLUMNA 2: AGENDADA -->
+              <div class="bg-slate-100/90 border border-slate-200 rounded-xl p-3 flex flex-col gap-3 min-h-[440px]">
+                <div class="flex items-center justify-between pb-2 border-b border-slate-300">
+                  <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-[#1d4ed8]"></span>
+                    <span class="font-bold text-xs uppercase tracking-wider text-slate-700">2. Agendada</span>
+                  </div>
+                  <span id="colCount-scheduled" class="bg-white text-slate-700 text-xs px-2 py-0.5 rounded-full font-bold shadow-xs border border-slate-200">1</span>
+                </div>
+                <div id="colList-scheduled" class="flex flex-col gap-3"></div>
+              </div>
+
+              <!-- COLUMNA 3: EN SERVICIO -->
+              <div class="bg-slate-100/90 border border-slate-200 rounded-xl p-3 flex flex-col gap-3 min-h-[440px]">
+                <div class="flex items-center justify-between pb-2 border-b border-slate-300">
+                  <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-[#1e293b]"></span>
+                    <span class="font-bold text-xs uppercase tracking-wider text-slate-700">3. En Servicio</span>
+                  </div>
+                  <span id="colCount-in_progress" class="bg-white text-slate-700 text-xs px-2 py-0.5 rounded-full font-bold shadow-xs border border-slate-200">1</span>
+                </div>
+                <div id="colList-in_progress" class="flex flex-col gap-3"></div>
+              </div>
+
+              <!-- COLUMNA 4: COMPLETADA / GARANTÍA ACTIVA -->
+              <div class="bg-slate-100/90 border border-slate-200 rounded-xl p-3 flex flex-col gap-3 min-h-[440px]">
+                <div class="flex items-center justify-between pb-2 border-b border-slate-300">
+                  <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                    <span class="font-bold text-xs uppercase tracking-wider text-slate-700">4. Completada / Garantía</span>
+                  </div>
+                  <span id="colCount-completed" class="bg-[#1d4ed8] text-white text-xs px-2 py-0.5 rounded-full font-bold shadow-xs">1</span>
+                </div>
+                <div id="colList-completed" class="flex flex-col gap-3"></div>
+              </div>
+
+            </div>
+          </div>
+
         </div>
 
-        <!-- COLUMNA 4: COMPLETADA / GARANTÍA ACTIVA -->
-        <div class="bg-slate-100/90 border border-slate-200 rounded-xl p-3 flex flex-col gap-3 min-h-[420px]">
-          <div class="flex items-center justify-between pb-2 border-b border-slate-300">
-            <div class="flex items-center gap-2">
-              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
-              <span class="font-bold text-xs uppercase tracking-wider text-slate-700">4. Completada / Garantía</span>
+        <!-- ========================================================================= -->
+        <!-- PESTAÑA 2: CLIENTES                                                       -->
+        <!-- ========================================================================= -->
+        <div id="tab-clients" class="hidden space-y-5">
+          <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
+            <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-200">
+              <div>
+                <h2 class="text-base font-bold text-slate-900">Directorio de Clientes Registrados</h2>
+                <p class="text-xs text-slate-500">Base de datos de clientes particulares para servicios técnicos.</p>
+              </div>
+              <button onclick="openNewOrderModal()" class="bg-[#1d4ed8] text-white px-3.5 py-1.5 rounded-xl text-xs font-bold shadow-xs hover:bg-blue-700 transition">
+                + Nuevo Cliente & Orden
+              </button>
             </div>
-            <span id="colCount-completed" class="bg-[#1d4ed8] text-white text-xs px-2 py-0.5 rounded-full font-bold shadow-xs">1</span>
+
+            <div class="overflow-x-auto mt-4">
+              <table class="w-full text-left text-xs text-slate-700">
+                <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase tracking-wider text-[10px]">
+                  <tr>
+                    <th class="p-3">Cliente</th>
+                    <th class="p-3">WhatsApp / Teléfono</th>
+                    <th class="p-3">Dirección</th>
+                    <th class="p-3">Servicios Atendidos</th>
+                    <th class="p-3">Garantía Activa</th>
+                    <th class="p-3 text-right">Acción</th>
+                  </tr>
+                </thead>
+                <tbody id="clientsTableBody" class="divide-y divide-slate-100">
+                  <!-- Se llena dinámicamente -->
+                </tbody>
+              </table>
+            </div>
           </div>
-          <div id="colList-completed" class="flex flex-col gap-3"></div>
         </div>
 
-      </div>
-    </section>
+        <!-- ========================================================================= -->
+        <!-- PESTAÑA 3: FICHA DE TÉCNICOS                                              -->
+        <!-- ========================================================================= -->
+        <div id="tab-technicians" class="hidden space-y-5">
+          <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
+            <div class="pb-4 border-b border-slate-200 flex items-center justify-between">
+              <div>
+                <h2 class="text-base font-bold text-slate-900">Personal Técnico Autorizado</h2>
+                <p class="text-xs text-slate-500">Monitoreo de estado de disponibilidad en tiempo real para asignación.</p>
+              </div>
+              <span class="text-xs text-slate-500 font-medium">Haz clic en el estado para cambiarlo manualmente</span>
+            </div>
 
-  </main>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5" id="techCardsContainer">
+              <!-- Se llena dinámicamente -->
+            </div>
+          </div>
+        </div>
+
+        <!-- ========================================================================= -->
+        <!-- PESTAÑA 4: EQUIPOS & GARANTÍAS                                            -->
+        <!-- ========================================================================= -->
+        <div id="tab-equipment" class="hidden space-y-5">
+          <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
+            <div class="pb-4 border-b border-slate-200">
+              <h2 class="text-base font-bold text-slate-900">Monitoreo de Equipos & Garantías de 3 Meses</h2>
+              <p class="text-xs text-slate-500">Historial técnico de aires acondicionados, TVs y electrodomésticos con vigencia de 90 días.</p>
+            </div>
+
+            <div class="overflow-x-auto mt-4">
+              <table class="w-full text-left text-xs text-slate-700">
+                <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase tracking-wider text-[10px]">
+                  <tr>
+                    <th class="p-3">Código Orden</th>
+                    <th class="p-3">Equipo & Marca</th>
+                    <th class="p-3">Serie</th>
+                    <th class="p-3">Cliente</th>
+                    <th class="p-3">Vencimiento Garantía</th>
+                    <th class="p-3">Estado Alarma</th>
+                  </tr>
+                </thead>
+                <tbody id="equipmentTableBody" class="divide-y divide-slate-100">
+                  <!-- Se llena dinámicamente -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </main>
+
+    </div>
+  </div>
 
   <!-- TOAST NOTIFICACIONES -->
   <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
-  <!-- MODAL 1: NUEVA ORDEN DE SERVICIO (THEMO CLEAN WHITE & COBALT) -->
+  <!-- ========================================================================= -->
+  <!-- MODAL PRINCIPAL: NUEVA ORDEN DE SERVICIO TÉCNICO (IDÉNTICO A LA IMAGEN)   -->
+  <!-- ========================================================================= -->
   <div id="newOrderModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white border border-slate-200 rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-150">
+    <div class="bg-white border-2 border-slate-300 rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-150">
       
-      <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
-        <div class="flex items-center gap-3">
-          <div class="w-8 h-8 rounded-lg bg-[#1e293b] text-white flex items-center justify-center font-bold text-xs">
+      <!-- CABECERA CON EMBLEMA OFICIAL THEMO (COMO EN LA IMAGEN) -->
+      <div class="px-6 pt-5 pb-3 border-b border-slate-200 flex flex-col items-center justify-center relative bg-gradient-to-b from-slate-50 to-white">
+        
+        <button onclick="closeNewOrderModal()" class="absolute right-4 top-4 text-slate-400 hover:text-slate-800 text-2xl font-bold p-1 leading-none">&times;</button>
+        
+        <!-- Isotipo THEMO de engranaje -->
+        <div class="flex items-center gap-2 mb-1">
+          <div class="w-9 h-9 rounded-xl bg-[#1e293b] text-white flex items-center justify-center text-base font-bold shadow-sm">
             ⚙️
           </div>
-          <div>
-            <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
-              <span>Nueva Orden de Servicio Técnico</span>
-              <span class="text-[10px] bg-blue-100 text-blue-800 px-2 py-0.5 rounded font-mono font-bold">30 Segundos</span>
-            </h3>
-            <p class="text-xs text-slate-500">Captura rápida para la secretaria con filtro automático de técnicos libres.</p>
-          </div>
+          <span class="text-lg font-black tracking-tight"><span class="text-[#1d4ed8]">THE</span><span class="text-[#1e293b]">MO</span></span>
         </div>
-        <button onclick="closeNewOrderModal()" class="text-slate-400 hover:text-slate-700 text-xl font-bold p-1">&times;</button>
+        <h3 class="text-base font-bold text-slate-900">Nueva Orden de Servicio Técnico</h3>
       </div>
 
-      <form id="newOrderForm" onsubmit="handleCreateOrder(event)" class="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
+      <!-- CUERPO DEL FORMULARIO CON LAS 3 SECCIONES EXACTAS -->
+      <form id="newOrderForm" onsubmit="handleCreateOrder(event)" class="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
         
-        <!-- DATOS DEL CLIENTE -->
+        <!-- SECCIÓN 1: DETALLES DEL CLIENTE -->
         <div>
-          <h4 class="text-xs font-bold text-[#1d4ed8] uppercase tracking-wider mb-2">1. Datos del Cliente</h4>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-2">Sección 1: Detalles del Cliente</h4>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
               <label class="block text-xs font-semibold text-slate-700 mb-1">Nombre Completo *</label>
-              <input required type="text" id="clientName" placeholder="Ej: Dra. Carolina Martínez" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-800 focus:border-[#1d4ed8] focus:bg-white focus:outline-none">
+              <input required type="text" id="clientName" placeholder="Nombre Completo" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:border-[#1d4ed8] focus:ring-1 focus:ring-blue-600/20 focus:outline-none">
             </div>
             <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1">WhatsApp / Teléfono *</label>
-              <input required type="text" id="clientPhone" placeholder="+57 300 123 4567" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-800 focus:border-[#1d4ed8] focus:bg-white focus:outline-none">
+              <label class="block text-xs font-semibold text-slate-700 mb-1">WhatsApp *</label>
+              <input required type="text" id="clientPhone" placeholder="WhatsApp" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:border-[#1d4ed8] focus:ring-1 focus:ring-blue-600/20 focus:outline-none">
             </div>
-            <div class="sm:col-span-2">
-              <label class="block text-xs font-semibold text-slate-700 mb-1">Dirección y Barrio *</label>
-              <input required type="text" id="clientAddress" placeholder="Ej: Calle 85 # 50-32, Barrio Alto Prado" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-800 focus:border-[#1d4ed8] focus:bg-white focus:outline-none">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Dirección *</label>
+              <input required type="text" id="clientAddress" placeholder="Dirección" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:border-[#1d4ed8] focus:ring-1 focus:ring-blue-600/20 focus:outline-none">
             </div>
           </div>
         </div>
 
-        <!-- FICHA TÉCNICA DEL EQUIPO -->
-        <div class="pt-2 border-t border-slate-200">
-          <h4 class="text-xs font-bold text-[#1d4ed8] uppercase tracking-wider mb-2">2. Ficha Técnica del Equipo</h4>
+        <!-- SECCIÓN 2: FICHA TÉCNICA DEL EQUIPO -->
+        <div class="pt-3 border-t border-slate-200">
+          <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-2">Sección 2: Ficha Técnica del Equipo</h4>
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
               <label class="block text-xs font-semibold text-slate-700 mb-1">Tipo de Equipo *</label>
-              <select id="equipType" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-800 focus:border-[#1d4ed8] focus:bg-white focus:outline-none">
-                <option value="Aire Acondicionado Split">Aire Acondicionado Split</option>
-                <option value="Aire Acondicionado Cassette">Aire Acondicionado Cassette</option>
-                <option value="Aire Central / Paquete">Aire Central / Paquete</option>
-                <option value="Smart TV / Pantalla">Smart TV / Pantalla</option>
-                <option value="Refrigerador / Nevera">Refrigerador / Nevera</option>
+              <select id="equipType" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:border-[#1d4ed8] focus:outline-none">
+                <option value="HVAC - Aire Acondicionado Split">HVAC - Aire Acondicionado Split</option>
+                <option value="HVAC - Aire Cassette / Central">HVAC - Aire Cassette / Central</option>
+                <option value="Electrodoméstico - Lavadora">Electrodoméstico - Lavadora</option>
+                <option value="Electrodoméstico - Smart TV">Electrodoméstico - Smart TV</option>
+                <option value="Electrodoméstico - Refrigerador">Electrodoméstico - Refrigerador</option>
               </select>
             </div>
             <div>
               <label class="block text-xs font-semibold text-slate-700 mb-1">Marca *</label>
-              <input required type="text" id="equipBrand" placeholder="Ej: LG / Samsung / Carrier" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-800 focus:border-[#1d4ed8] focus:bg-white focus:outline-none">
+              <input required type="text" id="equipBrand" placeholder="Marca (LG, Samsung, Mabe...)" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:border-[#1d4ed8] focus:outline-none">
             </div>
             <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1">Modelo / Serie</label>
-              <input type="text" id="equipSerial" placeholder="Ej: VM122CE / NO_VISIBLE" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-800 focus:border-[#1d4ed8] focus:bg-white focus:outline-none">
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Modelo / Número de Serial</label>
+              <input type="text" id="equipSerial" placeholder="Modelo / Número de Serial" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:border-[#1d4ed8] focus:outline-none">
             </div>
             <div class="sm:col-span-3">
-              <label class="block text-xs font-semibold text-slate-700 mb-1">Daño o Falla Reportada *</label>
-              <textarea required id="equipFault" rows="2" placeholder="Ej: No enfría, turbina sucia y goteo leve de agua..." class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-800 focus:border-[#1d4ed8] focus:bg-white focus:outline-none"></textarea>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Falla Reportada *</label>
+              <textarea required id="equipFault" rows="2" placeholder="Falla Reportada" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:border-[#1d4ed8] focus:outline-none"></textarea>
             </div>
           </div>
         </div>
 
-        <!-- ASIGNACIÓN Y COSTOS -->
-        <div class="pt-2 border-t border-slate-200">
-          <h4 class="text-xs font-bold text-[#1d4ed8] uppercase tracking-wider mb-2">3. Asignación de Técnico y Cobro</h4>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <!-- SECCIÓN 3: ASIGNACIÓN Y COBRO (CON SELECTOR COLOREADO Y PRECIO COP) -->
+        <div class="pt-3 border-t border-slate-200">
+          <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-2">Sección 3: Asignación y Cobro</h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            
+            <!-- SELECTOR DE TÉCNICO COLOREADO -->
             <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1 flex items-center justify-between">
-                <span>Técnico Asignado:</span>
-                <span class="text-[10px] text-emerald-700 font-bold">Filtrando solo libres 🟢</span>
-              </label>
-              <select id="techSelect" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-800 focus:border-[#1d4ed8] focus:bg-white focus:outline-none">
-                <!-- Se llena dinámicamente -->
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Asignación de Técnico *</label>
+              <select id="techSelect" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:border-[#1d4ed8] focus:ring-1 focus:ring-blue-600/20 focus:outline-none font-medium">
+                <!-- Se pobla dinámicamente con los estados 🟢, 🔵, 🔴 -->
               </select>
             </div>
+
+            <!-- COBRO CON VALOR EN COP Y BOTONES RÁPIDOS -->
             <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1">Valor Estimado en COP ($) *</label>
-              <input required type="number" step="5000" id="orderCost" value="90000" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-800 focus:border-[#1d4ed8] focus:bg-white focus:outline-none font-bold text-[#1d4ed8]">
-              <div class="flex gap-1.5 mt-1.5">
-                <button type="button" onclick="document.getElementById('orderCost').value = 80000" class="text-[10px] bg-blue-50 text-blue-800 border border-blue-200 px-2 py-0.5 rounded hover:bg-blue-100 font-semibold">$80k</button>
-                <button type="button" onclick="document.getElementById('orderCost').value = 100000" class="text-[10px] bg-blue-50 text-blue-800 border border-blue-200 px-2 py-0.5 rounded hover:bg-blue-100 font-semibold">$100k</button>
-                <button type="button" onclick="document.getElementById('orderCost').value = 180000" class="text-[10px] bg-blue-50 text-blue-800 border border-blue-200 px-2 py-0.5 rounded hover:bg-blue-100 font-semibold">$180k</button>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Cobro Estimado</label>
+              <div class="flex items-center gap-3">
+                <span id="displayPriceLabel" class="text-2xl font-black text-slate-900">$90.000 COP</span>
+                <input type="hidden" id="orderCost" value="90000">
+              </div>
+              <div class="flex gap-2 mt-2">
+                <button type="button" onclick="setQuickPrice(80000)" class="price-btn text-xs font-bold px-3 py-1 rounded-lg border border-slate-200 bg-slate-100 text-slate-700 hover:bg-blue-50 hover:text-[#1d4ed8] hover:border-blue-300 transition">$80.000</button>
+                <button type="button" onclick="setQuickPrice(90000)" class="price-btn text-xs font-bold px-3 py-1 rounded-lg border border-blue-600 bg-[#1d4ed8] text-white shadow-xs transition">$90.000</button>
+                <button type="button" onclick="setQuickPrice(100000)" class="price-btn text-xs font-bold px-3 py-1 rounded-lg border border-slate-200 bg-slate-100 text-slate-700 hover:bg-blue-50 hover:text-[#1d4ed8] hover:border-blue-300 transition">$100.000</button>
+                <button type="button" onclick="setQuickPrice(180000)" class="price-btn text-xs font-bold px-3 py-1 rounded-lg border border-slate-200 bg-slate-100 text-slate-700 hover:bg-blue-50 hover:text-[#1d4ed8] hover:border-blue-300 transition">$180.000</button>
               </div>
             </div>
+
           </div>
         </div>
 
-        <div class="pt-4 border-t border-slate-200 flex items-center justify-end gap-3">
-          <button type="button" onclick="closeNewOrderModal()" class="px-4 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 transition">Cancelar</button>
-          <button type="submit" class="px-5 py-2 rounded-lg text-xs font-bold text-white bg-[#1d4ed8] hover:bg-blue-700 transition shadow-md shadow-blue-700/30">Guardar y Agendar Cita</button>
+        <!-- BOTONES DE ACCIÓN INFERIORES -->
+        <div class="pt-5 border-t border-slate-200 flex items-center justify-end gap-3">
+          <button type="button" onclick="closeNewOrderModal()" class="px-6 py-2.5 rounded-xl text-xs font-bold text-slate-700 bg-slate-200 hover:bg-slate-300 transition">Cancelar</button>
+          <button type="submit" class="px-6 py-2.5 rounded-xl text-xs font-bold text-white bg-[#1d4ed8] hover:bg-blue-700 transition shadow-md shadow-blue-700/30">Guardar y Agendar Cita</button>
         </div>
 
       </form>
@@ -315,33 +465,38 @@
     </div>
   </div>
 
-  <!-- MODAL 2: ALARMAS DE GARANTÍA -->
+  <!-- ========================================================================= -->
+  <!-- MODAL DE ALARMAS DE GARANTÍA (3 NIVELES: +24h, +60d, +85d)               -->
+  <!-- ========================================================================= -->
   <div id="alarmsModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white border border-slate-200 rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl">
+    <div class="bg-white border border-slate-200 rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl">
       
       <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
-        <div>
-          <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
-            <span>🛡️ Motor de Alarmas de Garantía (3 Meses)</span>
-          </h3>
-          <p class="text-xs text-slate-500">Disparo automático para control de calidad, satisfacción y renovación post-venta.</p>
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-[#1d4ed8] text-white flex items-center justify-center text-sm font-bold">
+            🛡️
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-slate-900">Motor de Alarmas de Garantía (90 Días / 3 Meses)</h3>
+            <p class="text-[11px] text-slate-500">Ciclo de post-venta para fidelización y control de calidad.</p>
+          </div>
         </div>
-        <button onclick="closeAlarmsModal()" class="text-slate-400 hover:text-slate-700 text-xl font-bold p-1">&times;</button>
+        <button onclick="closeAlarmsModal()" class="text-slate-400 hover:text-slate-700 text-xl font-bold p-1 leading-none">&times;</button>
       </div>
 
-      <div class="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
+      <div class="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
         <div class="grid grid-cols-3 gap-2 text-center text-xs pb-3 border-b border-slate-200">
-          <div class="bg-blue-50 border border-blue-200 p-2.5 rounded-lg">
+          <div class="bg-blue-50 border border-blue-200 p-2.5 rounded-xl">
             <span class="block font-bold text-blue-800">1. Día 1 (+24h)</span>
-            <span class="text-[11px] text-slate-600 font-medium">Calidad Administrativa</span>
+            <span class="text-[10px] text-slate-600">Calidad Administrativa</span>
           </div>
-          <div class="bg-slate-100 border border-slate-300 p-2.5 rounded-lg">
+          <div class="bg-slate-100 border border-slate-300 p-2.5 rounded-xl">
             <span class="block font-bold text-slate-800">2. Día 60 (+2 meses)</span>
-            <span class="text-[11px] text-slate-600 font-medium">Checkup Preventivo</span>
+            <span class="text-[10px] text-slate-600">Checkup Preventivo</span>
           </div>
-          <div class="bg-blue-50 border border-blue-200 p-2.5 rounded-lg">
+          <div class="bg-blue-50 border border-blue-200 p-2.5 rounded-xl">
             <span class="block font-bold text-[#1d4ed8]">3. Día 85 (Cierre)</span>
-            <span class="text-[11px] text-slate-600 font-medium">Oferta Mantenimiento</span>
+            <span class="text-[10px] text-slate-600">Oferta Mantenimiento</span>
           </div>
         </div>
 
@@ -351,20 +506,20 @@
       </div>
 
       <div class="px-6 py-3 bg-slate-50 border-t border-slate-200 flex justify-end">
-        <button onclick="closeAlarmsModal()" class="px-4 py-2 bg-slate-200 text-slate-800 rounded-lg text-xs font-semibold hover:bg-slate-300 transition">Cerrar</button>
+        <button onclick="closeAlarmsModal()" class="px-4 py-2 bg-slate-200 text-slate-800 rounded-xl text-xs font-bold hover:bg-slate-300 transition">Cerrar</button>
       </div>
 
     </div>
   </div>
 
-  <!-- MODAL 3: ORDEN DE SERVICIO IMPRIMIBLE (PDF 1 PÁGINA) -->
+  <!-- ========================================================================= -->
+  <!-- MODAL RECIBO IMPRIMIBLE (PDF 1 PÁGINA)                                    -->
+  <!-- ========================================================================= -->
   <div id="printOrderModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white text-slate-900 rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
       
-      <!-- CONTENEDOR IMPRIMIBLE OFICIAL THEMO -->
       <div id="printableOrderModalContent" class="p-8 bg-white overflow-y-auto space-y-5 text-xs text-slate-800 font-sans">
         
-        <!-- ENCABEZADO CON LOGO THEMO -->
         <div class="flex items-center justify-between border-b-2 border-slate-900 pb-4">
           <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-lg bg-[#1e293b] text-white flex items-center justify-center font-bold text-xl">
@@ -386,8 +541,7 @@
           </div>
         </div>
 
-        <!-- DATOS DEL CLIENTE Y TÉCNICO -->
-        <div class="grid grid-cols-2 gap-4 bg-slate-50 p-3 rounded-lg border border-slate-200">
+        <div class="grid grid-cols-2 gap-4 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
           <div>
             <h4 class="font-bold text-[11px] text-[#1d4ed8] uppercase tracking-wider mb-1">Datos del Cliente:</h4>
             <p><strong>Nombre:</strong> <span id="printClientName">-</span></p>
@@ -402,39 +556,36 @@
           </div>
         </div>
 
-        <!-- FICHA TÉCNICA DEL EQUIPO -->
-        <div class="border border-slate-200 rounded-lg overflow-hidden">
-          <div class="bg-slate-100 px-3 py-1.5 font-bold text-[11px] text-slate-800 border-b border-slate-200">
+        <div class="border border-slate-200 rounded-xl overflow-hidden">
+          <div class="bg-slate-100 px-3.5 py-2 font-bold text-[11px] text-slate-800 border-b border-slate-200">
             Ficha Técnica del Equipo Atendido
           </div>
-          <div class="p-3 grid grid-cols-3 gap-2 bg-white">
+          <div class="p-3.5 grid grid-cols-3 gap-2 bg-white">
             <div><strong>Tipo:</strong> <br><span id="printEquipType" class="text-slate-700">-</span></div>
             <div><strong>Marca:</strong> <br><span id="printEquipBrand" class="text-slate-700">-</span></div>
             <div><strong>Serie / Modelo:</strong> <br><span id="printEquipSerial" class="text-slate-700">-</span></div>
           </div>
         </div>
 
-        <!-- DIAGNÓSTICO Y REPARACIÓN -->
         <div class="grid grid-cols-2 gap-3">
-          <div class="border border-slate-200 p-3 rounded-lg">
+          <div class="border border-slate-200 p-3 rounded-xl">
             <h5 class="font-bold text-[10px] text-slate-600 uppercase mb-1">Daño o Falla Reportada:</h5>
             <p id="printEquipFault" class="text-slate-800 italic">-</p>
           </div>
-          <div class="border border-slate-200 p-3 rounded-lg">
+          <div class="border border-slate-200 p-3 rounded-xl">
             <h5 class="font-bold text-[10px] text-slate-600 uppercase mb-1">Reparación / Labor Ejecutada:</h5>
             <p id="printEquipRepair" class="text-slate-800">-</p>
           </div>
         </div>
 
-        <!-- VALOR Y SELLO DE GARANTÍA -->
-        <div class="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-slate-50 rounded-xl border border-blue-200">
+        <div class="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 via-slate-50 to-white rounded-2xl border border-blue-200">
           <div class="flex items-center gap-3">
-            <div class="w-12 h-12 rounded-full bg-[#1d4ed8] text-white flex items-center justify-center font-black text-xl shadow-sm">
+            <div class="w-11 h-11 rounded-full bg-[#1d4ed8] text-white flex items-center justify-center font-black text-lg shadow-xs">
               🛡️
             </div>
             <div>
-              <span class="font-black text-slate-900 text-sm tracking-wide block">GARANTÍA DE SERVICIO: 3 MESES (90 DÍAS)</span>
-              <p class="text-[10px] text-slate-600">Válida y garantizada por THEMO ServiSmart hasta el: <strong id="printWarrantyDate" class="text-slate-900">10/12/2026</strong></p>
+              <span class="font-black text-slate-900 text-sm tracking-wide block">GARANTÍA CERTIFICADA: 3 MESES (90 DÍAS)</span>
+              <p class="text-[10px] text-slate-600">Válida y garantizada por THEMO ServiSmart hasta: <strong id="printWarrantyDate" class="text-slate-900">10/12/2026</strong></p>
             </div>
           </div>
           <div class="text-right">
@@ -443,15 +594,14 @@
           </div>
         </div>
 
-        <!-- FIRMAS -->
         <div class="grid grid-cols-2 gap-8 pt-6 border-t border-slate-200">
           <div class="text-center">
-            <div class="border-b border-slate-400 w-48 mx-auto mb-1"></div>
+            <div class="border-b border-slate-400 w-44 mx-auto mb-1"></div>
             <p class="font-bold text-[10px] text-slate-800">Firma Técnico Responsable</p>
             <p class="text-[9px] text-slate-500">C.C. Personal Técnico Autorizado</p>
           </div>
           <div class="text-center">
-            <div class="border-b border-slate-400 w-48 mx-auto mb-1"></div>
+            <div class="border-b border-slate-400 w-44 mx-auto mb-1"></div>
             <p class="font-bold text-[10px] text-slate-800">Firma Cliente a Satisfacción</p>
             <p class="text-[9px] text-slate-500">Aceptación de Servicio y Garantía</p>
           </div>
@@ -459,10 +609,9 @@
 
       </div>
 
-      <!-- BOTONES MODAL NO IMPRIMIBLES -->
       <div class="p-3 bg-slate-50 border-t border-slate-200 flex justify-end gap-2">
         <button onclick="closePrintModal()" class="px-4 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 transition">Cerrar</button>
-        <button onclick="window.print()" class="px-4 py-1.5 bg-[#1d4ed8] hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+        <button onclick="window.print()" class="px-4 py-1.5 bg-[#1d4ed8] hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs">
           <span>🖨️ Imprimir / Guardar PDF</span>
         </button>
       </div>
@@ -470,22 +619,25 @@
     </div>
   </div>
 
-  <!-- SCRIPT DE LÓGICA REACTIVA Y ESTADO -->
+  <!-- ========================================================================= -->
+  <!-- LÓGICA JAVASCRIPT COMPLETA Y REACTIVA (THEMO SAAS ENGINE)                 -->
+  <!-- ========================================================================= -->
   <script>
-    // ESTADO GLOBAL DE LA APLICACIÓN (MOCK DATA)
+    // 1. ESTADO GLOBAL: TÉCNICOS (CON ESTADOS DISPONIBLE / EN CITA / NO DISPONIBLE)
     let technicians = [
-      { id: 1, name: "Carlos Mendoza", specialty: "Climatización / Aires Split", status: "disponible" },
-      { id: 2, name: "Javier Gómez", specialty: "Refrigeración y Centrales", status: "ocupado" },
-      { id: 3, name: "Andrés Silva", specialty: "Electrónica y Smart TVs", status: "disponible" }
+      { id: 1, name: "Carlos Mendoza", specialty: "Climatización (HVAC)", status: "disponible", phone: "+57 301 555 1122" },
+      { id: 2, name: "Ana García", specialty: "Electrodomésticos", status: "en_cita", phone: "+57 302 444 3344" },
+      { id: 3, name: "Pedro Ruiz", specialty: "Refrigeración", status: "no_disponible", phone: "+57 300 777 8899" }
     ];
 
+    // 2. ESTADO GLOBAL: ÓRDENES DE SERVICIO
     let orders = [
       {
         id: "OS-2026-0041",
         clientName: "Dra. Marcela Restrepo",
         clientPhone: "+57 310 456 7890",
         clientAddress: "Cra 54 # 72-109, Prado",
-        equipType: "Aire Acondicionado Split 12000 BTU",
+        equipType: "HVAC - Aire Acondicionado Split",
         equipBrand: "LG Dual Inverter",
         equipSerial: "LG-90234",
         equipFault: "Falta de enfriamiento y filtro taponado con polvo",
@@ -501,7 +653,7 @@
         clientName: "Restaurante La Cabaña Express",
         clientPhone: "+57 301 234 5678",
         clientAddress: "Calle 84 # 47-30, Local 3",
-        equipType: "Aire Cassette 36000 BTU",
+        equipType: "HVAC - Aire Cassette / Central",
         equipBrand: "Carrier",
         equipSerial: "CR-77821",
         equipFault: "Goteo constante en bandeja de condensado sobre mesas",
@@ -517,14 +669,14 @@
         clientName: "Edificio Torre Palma Real (Apt 502)",
         clientPhone: "+57 315 789 1234",
         clientAddress: "Calle 98 # 52-20, Apt 502",
-        equipType: "Smart TV 65" OLED",
+        equipType: "Electrodoméstico - Smart TV",
         equipBrand: "Samsung",
         equipSerial: "SAM-OLED65-44",
         equipFault: "Líneas horizontales en pantalla y reinicio intermitente",
         equipRepair: "Diagnóstico de tarjeta T-CON y fuente",
         cost: 160000,
         status: "scheduled",
-        techId: 3,
+        techId: 1,
         date: "2026-09-09",
         completedDate: null
       },
@@ -533,7 +685,7 @@
         clientName: "Roberto Manotas",
         clientPhone: "+57 320 654 3210",
         clientAddress: "Cra 43 # 68-12",
-        equipType: "Aire Acondicionado Split 18000 BTU",
+        equipType: "HVAC - Aire Acondicionado Split",
         equipBrand: "Mabe",
         equipSerial: "NO_VISIBLE",
         equipFault: "Enciende consola pero no arranca el compresor en condensadora",
@@ -546,8 +698,11 @@
       }
     ];
 
+    let currentTab = "dashboard";
+
+    // UTILIDADES DE FORMATO
     function formatCOP(num) {
-      return "$" + num.toLocaleString("es-CO") + " COP";
+      return "$" + Number(num).toLocaleString("es-CO") + " COP";
     }
 
     function calcWarrantyDate(dateStr) {
@@ -557,6 +712,28 @@
       return d.toLocaleDateString("es-CO");
     }
 
+    // CAMBIO DE PESTAÑAS (SIDEBAR)
+    function switchTab(tabName) {
+      currentTab = tabName;
+      
+      const tabs = ["dashboard", "clients", "technicians", "equipment"];
+      tabs.forEach(t => {
+        const el = document.getElementById("tab-" + t);
+        const btn = document.getElementById("nav-" + t);
+        if (el) el.classList.toggle("hidden", t !== tabName);
+        if (btn) {
+          if (t === tabName) {
+            btn.className = "nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition bg-blue-50 text-[#1d4ed8] border border-blue-100";
+          } else {
+            btn.className = "nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition border border-transparent";
+          }
+        }
+      });
+
+      renderApp();
+    }
+
+    // RENDER PRINCIPAL
     function renderApp() {
       const q = document.getElementById("searchInput").value.toLowerCase().trim();
 
@@ -568,6 +745,7 @@
                o.equipType.toLowerCase().includes(q);
       });
 
+      // KPIs
       const newOrders = filteredOrders.filter(o => o.status === "new");
       const scheduledOrders = filteredOrders.filter(o => o.status === "scheduled");
       const inProgressOrders = filteredOrders.filter(o => o.status === "in_progress");
@@ -584,20 +762,26 @@
       document.getElementById("statAvailableTechs").innerText = `${freeTechs} / ${technicians.length}`;
       document.getElementById("statActiveWarranties").innerText = completedOrders.length;
 
+      // Renderizar columnas Kanban
       renderColumn("colList-new", newOrders);
       renderColumn("colList-scheduled", scheduledOrders);
       renderColumn("colList-in_progress", inProgressOrders);
       renderColumn("colList-completed", completedOrders);
 
+      // Renderizar otras vistas
+      renderClientsTable();
+      renderTechCards();
+      renderEquipmentTable();
       renderAlarmsList();
     }
 
+    // RENDER COLUMNAS KANBAN
     function renderColumn(colId, colOrders) {
       const container = document.getElementById(colId);
       if (colOrders.length === 0) {
         container.innerHTML = `
-          <div class="py-8 text-center text-xs text-slate-400 border border-dashed border-slate-300 rounded-lg bg-white/50">
-            No hay órdenes aquí
+          <div class="py-8 text-center text-xs text-slate-400 border border-dashed border-slate-300 rounded-xl bg-white/60">
+            No hay órdenes en esta fase
           </div>
         `;
         return;
@@ -605,50 +789,57 @@
 
       container.innerHTML = colOrders.map(order => {
         const tech = technicians.find(t => t.id === order.techId);
-        const techBadge = tech 
-          ? `<span class="bg-slate-100 text-slate-800 border border-slate-300 text-[10px] px-1.5 py-0.5 rounded font-medium">🧑‍🔧 ${tech.name}</span>`
-          : `<span class="bg-amber-50 text-amber-800 border border-amber-200 text-[10px] px-1.5 py-0.5 rounded font-medium">⚠️ Sin asignar</span>`;
+        let techBadge = `<span class="bg-amber-50 text-amber-800 border border-amber-200 text-[10px] px-2 py-0.5 rounded-full font-medium">⚠️ Sin asignar</span>`;
+        if (tech) {
+          if (tech.status === "disponible") {
+            techBadge = `<span class="bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] px-2 py-0.5 rounded-full font-semibold flex items-center gap-1">🟢 ${tech.name}</span>`;
+          } else if (tech.status === "en_cita") {
+            techBadge = `<span class="bg-blue-50 text-blue-800 border border-blue-200 text-[10px] px-2 py-0.5 rounded-full font-semibold flex items-center gap-1">🔵 ${tech.name}</span>`;
+          } else {
+            techBadge = `<span class="bg-slate-100 text-slate-800 border border-slate-300 text-[10px] px-2 py-0.5 rounded-full font-semibold flex items-center gap-1">🔴 ${tech.name}</span>`;
+          }
+        }
 
         const isWarranty = order.status === "completed";
 
         return `
-          <div class="bg-white border ${isWarranty ? 'border-blue-400 shadow-blue-500/10' : 'border-slate-200'} rounded-xl p-3.5 shadow-xs flex flex-col gap-2.5 hover:border-[#1d4ed8] hover:shadow-md transition group">
+          <div class="bg-white border ${isWarranty ? 'border-blue-400 shadow-blue-500/10' : 'border-slate-200'} rounded-2xl p-4 shadow-xs flex flex-col gap-2.5 hover:border-[#1d4ed8] hover:shadow-md transition group">
             
             <div class="flex items-start justify-between gap-2">
-              <span class="font-mono text-xs font-bold text-[#1d4ed8] bg-blue-50 border border-blue-200 px-1.5 py-0.5 rounded">${order.id}</span>
+              <span class="font-mono text-xs font-bold text-[#1d4ed8] bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-md">${order.id}</span>
               <span class="text-xs font-black text-slate-900">${formatCOP(order.cost)}</span>
             </div>
 
             <div>
-              <h4 class="font-bold text-sm text-slate-900">${order.clientName}</h4>
-              <p class="text-[11px] text-slate-500 flex items-center gap-1">📍 ${order.clientAddress}</p>
-              <p class="text-[11px] text-[#1d4ed8] font-medium flex items-center gap-1 cursor-pointer hover:underline" onclick="simulateWhatsApp('${order.clientPhone}', '${order.clientName}')">
+              <h4 class="font-bold text-sm text-slate-900 leading-tight">${order.clientName}</h4>
+              <p class="text-[11px] text-slate-500 flex items-center gap-1 mt-0.5">📍 ${order.clientAddress}</p>
+              <p class="text-[11px] text-[#1d4ed8] font-semibold flex items-center gap-1 cursor-pointer hover:underline mt-0.5" onclick="simulateWhatsApp('${order.clientPhone}', '${order.clientName}')">
                 📱 ${order.clientPhone}
               </p>
             </div>
 
-            <div class="bg-slate-50 rounded-lg p-2 border border-slate-200 text-[11px] space-y-1">
+            <div class="bg-slate-50 rounded-xl p-2.5 border border-slate-200 text-[11px] space-y-1">
               <div class="flex items-center justify-between text-slate-700">
-                <span class="font-semibold text-slate-900">❄️ ${order.equipType}</span>
-                <span class="text-[10px] bg-white border border-slate-200 text-slate-600 px-1 rounded">${order.equipBrand}</span>
+                <span class="font-bold text-slate-900">❄️ ${order.equipType}</span>
+                <span class="text-[10px] bg-white border border-slate-200 text-slate-600 px-1.5 py-0.2 rounded font-medium">${order.equipBrand}</span>
               </div>
               <p class="text-slate-500 text-[10px] line-clamp-1"><strong>Falla:</strong> ${order.equipFault}</p>
             </div>
 
             ${isWarranty ? `
-              <div class="bg-blue-50 border border-blue-200 rounded-lg px-2 py-1 text-[10px] text-blue-900 flex items-center justify-between font-semibold">
-                <span>🛡️ Garantía 3M activa</span>
+              <div class="bg-blue-50 border border-blue-200 rounded-xl px-2.5 py-1 text-[10px] text-blue-900 flex items-center justify-between font-bold">
+                <span>🛡️ Garantía 3M Activa</span>
                 <span>Vence: ${calcWarrantyDate(order.completedDate)}</span>
               </div>
             ` : ''}
 
-            <div class="flex items-center justify-between pt-1 border-t border-slate-100 text-[11px]">
+            <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-[11px]">
               ${techBadge}
-              <div class="flex items-center gap-1">
-                <button onclick="openPrintModal('${order.id}')" title="Ver Orden / Ficha Técnica en PDF" class="p-1.5 text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 rounded transition text-xs">
+              <div class="flex items-center gap-1.5">
+                <button onclick="openPrintModal('${order.id}')" title="Ver Orden / Ficha Técnica en PDF" class="p-1.5 text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 rounded-lg transition text-xs">
                   📄
                 </button>
-                <button onclick="advanceOrderStatus('${order.id}')" title="Avanzar estado" class="px-2 py-1 bg-[#1d4ed8] hover:bg-blue-700 text-white rounded text-[10px] font-bold transition flex items-center gap-0.5 shadow-xs">
+                <button onclick="advanceOrderStatus('${order.id}')" title="Avanzar de fase" class="px-2.5 py-1 bg-[#1d4ed8] hover:bg-blue-700 text-white rounded-lg text-[10px] font-bold transition flex items-center gap-1 shadow-2xs">
                   <span>Avanzar</span> →
                 </button>
               </div>
@@ -659,6 +850,143 @@
       }).join("");
     }
 
+    // PESTAÑA: TABLA DE CLIENTES
+    function renderClientsTable() {
+      const tbody = document.getElementById("clientsTableBody");
+      if (!tbody) return;
+
+      const clientMap = {};
+      orders.forEach(o => {
+        if (!clientMap[o.clientPhone]) {
+          clientMap[o.clientPhone] = {
+            name: o.clientName,
+            phone: o.clientPhone,
+            address: o.clientAddress,
+            orderCount: 1,
+            hasWarranty: o.status === "completed"
+          };
+        } else {
+          clientMap[o.clientPhone].orderCount++;
+          if (o.status === "completed") clientMap[o.clientPhone].hasWarranty = true;
+        }
+      });
+
+      const clientList = Object.values(clientMap);
+      document.getElementById("badgeClientCount").innerText = clientList.length;
+
+      tbody.innerHTML = clientList.map(c => `
+        <tr class="hover:bg-slate-50/80 transition">
+          <td class="p-3 font-bold text-slate-900">${c.name}</td>
+          <td class="p-3 text-[#1d4ed8] font-semibold cursor-pointer hover:underline" onclick="simulateWhatsApp('${c.phone}', '${c.name}')">${c.phone}</td>
+          <td class="p-3 text-slate-600">${c.address}</td>
+          <td class="p-3 font-semibold text-slate-800">${c.orderCount} orden(es)</td>
+          <td class="p-3">
+            ${c.hasWarranty 
+              ? '<span class="bg-blue-50 text-[#1d4ed8] border border-blue-200 px-2 py-0.5 rounded-full text-[10px] font-bold">🛡️ Activa</span>' 
+              : '<span class="text-slate-400 text-[11px]">—</span>'}
+          </td>
+          <td class="p-3 text-right">
+            <button onclick="openNewOrderModalForClient('${c.name}', '${c.phone}', '${c.address}')" class="text-xs text-[#1d4ed8] hover:underline font-bold">+ Nueva Cita</button>
+          </td>
+        </tr>
+      `).join("");
+    }
+
+    // PESTAÑA: FICHA DE TÉCNICOS
+    function renderTechCards() {
+      const container = document.getElementById("techCardsContainer");
+      if (!container) return;
+
+      container.innerHTML = technicians.map(t => {
+        let statusBadge = "";
+        let btnText = "";
+        if (t.status === "disponible") {
+          statusBadge = `<span class="bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1.5">🟢 Disponible (Libre)</span>`;
+          btnText = "Marcar en Cita";
+        } else if (t.status === "en_cita") {
+          statusBadge = `<span class="bg-blue-50 text-blue-800 border border-blue-200 text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1.5">🔵 En Cita de Servicio</span>`;
+          btnText = "Marcar No Disponible";
+        } else {
+          statusBadge = `<span class="bg-slate-100 text-slate-800 border border-slate-300 text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1.5">🔴 No Disponible</span>`;
+          btnText = "Marcar Disponible";
+        }
+
+        const activeOrder = orders.find(o => o.techId === t.id && (o.status === "scheduled" || o.status === "in_progress"));
+
+        return `
+          <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs flex flex-col justify-between gap-4">
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <div class="w-12 h-12 rounded-2xl bg-slate-100 text-slate-800 font-black text-lg flex items-center justify-center border border-slate-200">
+                  🧑‍🔧
+                </div>
+                ${statusBadge}
+              </div>
+
+              <h4 class="font-bold text-base text-slate-900">${t.name}</h4>
+              <p class="text-xs text-[#1d4ed8] font-semibold">${t.specialty}</p>
+              <p class="text-xs text-slate-500 mt-1">📱 ${t.phone}</p>
+
+              <div class="mt-4 p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs">
+                <p class="text-slate-500 font-semibold text-[10px] uppercase">Servicio Actual:</p>
+                <p class="font-bold text-slate-800 mt-0.5">${activeOrder ? `${activeOrder.id} - ${activeOrder.clientName}` : 'Sin cita activa en este momento'}</p>
+              </div>
+            </div>
+
+            <button onclick="toggleTechStatus(${t.id})" class="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-bold transition border border-slate-200">
+              🔄 ${btnText}
+            </button>
+          </div>
+        `;
+      }).join("");
+    }
+
+    // CAMBIAR ESTADO DE TÉCNICO
+    function toggleTechStatus(techId) {
+      const tech = technicians.find(t => t.id === techId);
+      if (!tech) return;
+
+      if (tech.status === "disponible") {
+        tech.status = "en_cita";
+      } else if (tech.status === "en_cita") {
+        tech.status = "no_disponible";
+      } else {
+        tech.status = "disponible";
+      }
+
+      showToast(`Estado de ${tech.name} actualizado.`, "info");
+      renderApp();
+    }
+
+    // PESTAÑA: EQUIPOS & GARANTÍAS
+    function renderEquipmentTable() {
+      const tbody = document.getElementById("equipmentTableBody");
+      if (!tbody) return;
+
+      tbody.innerHTML = orders.map(o => {
+        const isWarranty = o.status === "completed";
+        return `
+          <tr class="hover:bg-slate-50/80 transition">
+            <td class="p-3 font-mono font-bold text-[#1d4ed8]">${o.id}</td>
+            <td class="p-3 font-bold text-slate-900">${o.equipType} (${o.equipBrand})</td>
+            <td class="p-3 font-mono text-slate-600">${o.equipSerial}</td>
+            <td class="p-3 text-slate-700">${o.clientName}</td>
+            <td class="p-3">
+              ${isWarranty 
+                ? `<span class="font-bold text-emerald-700">${calcWarrantyDate(o.completedDate)} (90 días)</span>` 
+                : '<span class="text-slate-400">En proceso de atención</span>'}
+            </td>
+            <td class="p-3">
+              ${isWarranty 
+                ? '<span class="bg-blue-50 text-[#1d4ed8] font-bold text-[10px] px-2 py-0.5 rounded-full border border-blue-200">3 Alarmas Activas</span>'
+                : '<span class="text-slate-400 text-xs">Sin alarma aún</span>'}
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    // AVANZAR ESTADO DE UNA ORDEN
     function advanceOrderStatus(orderId) {
       const order = orders.find(o => o.id === orderId);
       if (!order) return;
@@ -668,12 +996,12 @@
           const freeTech = technicians.find(t => t.status === "disponible");
           if (freeTech) {
             order.techId = freeTech.id;
-            freeTech.status = "ocupado";
+            freeTech.status = "en_cita";
             showToast(`Técnico ${freeTech.name} asignado automáticamente.`, "success");
           }
         }
         order.status = "scheduled";
-        showToast(`Orden ${order.id} movida a Agendada.`, "info");
+        showToast(`Orden ${order.id} agendada formalmente.`, "info");
       } else if (order.status === "scheduled") {
         order.status = "in_progress";
         showToast(`Orden ${order.id} marcada En Servicio.`, "info");
@@ -684,7 +1012,7 @@
         const tech = technicians.find(t => t.id === order.techId);
         if (tech) tech.status = "disponible";
 
-        showToast(`🎉 ¡Servicio completado! Se activó la Garantía de 3 Meses y 3 Alarmas.`, "success");
+        showToast(`🎉 ¡Servicio completado! Se activó la Garantía de 3 Meses y las 3 Alarmas.`, "success");
       } else {
         showToast(`La orden ya se encuentra Completada con Garantía Activa.`, "info");
       }
@@ -692,44 +1020,51 @@
       renderApp();
     }
 
+    // MOTOR DE ALARMAS
     function renderAlarmsList() {
       const container = document.getElementById("alarmsListContainer");
       const completedOrders = orders.filter(o => o.status === "completed");
 
+      document.getElementById("badgeWarrantyCount").innerText = completedOrders.length;
+
       if (completedOrders.length === 0) {
         container.innerHTML = `<p class="text-xs text-slate-500 text-center py-4">No hay garantías activas todavía.</p>`;
         document.getElementById("alarmsCountBadge").innerText = "0";
+        document.getElementById("topbarAlarmsBadge").innerText = "0";
+        document.getElementById("sidebarAlarmsCount").innerText = "0";
         return;
       }
 
-      let totalAlarms = 0;
-      let html = "";
+      let totalAlarms = completedOrders.length * 3;
+      document.getElementById("alarmsCountBadge").innerText = totalAlarms;
+      document.getElementById("topbarAlarmsBadge").innerText = totalAlarms;
+      document.getElementById("sidebarAlarmsCount").innerText = totalAlarms;
 
+      let html = "";
       completedOrders.forEach(o => {
-        totalAlarms += 3;
         const d1 = new Date(o.completedDate); d1.setDate(d1.getDate() + 1);
         const d2 = new Date(o.completedDate); d2.setDate(d2.getDate() + 60);
         const d3 = new Date(o.completedDate); d3.setDate(d3.getDate() + 85);
 
         html += `
-          <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 space-y-2">
+          <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3.5 space-y-2">
             <div class="flex items-center justify-between text-xs">
-              <span class="font-bold text-slate-900">Orden ${o.id} — ${o.clientName}</span>
+              <span class="font-bold text-slate-900">${o.id} — ${o.clientName}</span>
               <span class="text-[#1d4ed8] font-semibold">${o.equipType}</span>
             </div>
             
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px]">
-              <div class="bg-white p-2 rounded border border-slate-200">
+              <div class="bg-white p-2.5 rounded-xl border border-slate-200">
                 <span class="text-[#1d4ed8] font-bold block">1. Calidad (+24h)</span>
                 <span class="text-slate-600 font-medium">${d1.toLocaleDateString("es-CO")}</span>
                 <button onclick="simulateWhatsApp('${o.clientPhone}', '${o.clientName}')" class="mt-1 text-[10px] text-blue-600 underline font-semibold block">Simular WhatsApp</button>
               </div>
-              <div class="bg-white p-2 rounded border border-slate-200">
+              <div class="bg-white p-2.5 rounded-xl border border-slate-200">
                 <span class="text-slate-800 font-bold block">2. Checkup (+60d)</span>
                 <span class="text-slate-600 font-medium">${d2.toLocaleDateString("es-CO")}</span>
                 <span class="text-[10px] text-slate-500 block mt-1">Encuesta estado</span>
               </div>
-              <div class="bg-white p-2 rounded border border-slate-200">
+              <div class="bg-white p-2.5 rounded-xl border border-slate-200">
                 <span class="text-[#1d4ed8] font-bold block">3. Cierre (+85d)</span>
                 <span class="text-slate-600 font-medium">${d3.toLocaleDateString("es-CO")}</span>
                 <span class="text-[10px] text-blue-700 font-semibold block mt-1">Oferta Mantenimiento</span>
@@ -740,26 +1075,55 @@
       });
 
       container.innerHTML = html;
-      document.getElementById("alarmsCountBadge").innerText = totalAlarms;
     }
 
+    // MODAL NUEVA ORDEN (POBLA EL SELECTOR CON ESTADOS VERDE, AZUL Y ROJO)
     function openNewOrderModal() {
       const techSelect = document.getElementById("techSelect");
-      const availableTechs = technicians.filter(t => t.status === "disponible");
       
-      techSelect.innerHTML = `
-        <option value="">Seleccione un técnico libre...</option>
-        ${availableTechs.map(t => `<option value="${t.id}">🟢 ${t.name} (${t.specialty})</option>`).join("")}
-        ${availableTechs.length === 0 ? '<option disabled value="">⚠️ No hay técnicos libres ahora</option>' : ''}
-      `;
+      let optionsHtml = '<option value="">Seleccione un técnico...</option>';
+      
+      technicians.forEach(t => {
+        if (t.status === "disponible") {
+          optionsHtml += `<option value="${t.id}">🟢 ${t.name} - ${t.specialty} (Libre)</option>`;
+        } else if (t.status === "en_cita") {
+          optionsHtml += `<option value="${t.id}">🔵 ${t.name} - ${t.specialty} (En Cita)</option>`;
+        } else {
+          optionsHtml += `<option value="${t.id}" disabled>🔴 ${t.name} - ${t.specialty} (No Disponible)</option>`;
+        }
+      });
 
+      techSelect.innerHTML = optionsHtml;
       document.getElementById("newOrderModal").classList.remove("hidden");
+    }
+
+    function openNewOrderModalForClient(name, phone, address) {
+      openNewOrderModal();
+      document.getElementById("clientName").value = name;
+      document.getElementById("clientPhone").value = phone;
+      document.getElementById("clientAddress").value = address;
     }
 
     function closeNewOrderModal() {
       document.getElementById("newOrderModal").classList.add("hidden");
     }
 
+    // BOTONES RÁPIDOS DE PRECIO
+    function setQuickPrice(val) {
+      document.getElementById("orderCost").value = val;
+      document.getElementById("displayPriceLabel").innerText = formatCOP(val);
+
+      const buttons = document.querySelectorAll(".price-btn");
+      buttons.forEach(btn => {
+        if (btn.innerText.includes(val.toLocaleString("es-CO"))) {
+          btn.className = "price-btn text-xs font-bold px-3 py-1 rounded-lg border border-blue-600 bg-[#1d4ed8] text-white shadow-xs transition";
+        } else {
+          btn.className = "price-btn text-xs font-bold px-3 py-1 rounded-lg border border-slate-200 bg-slate-100 text-slate-700 hover:bg-blue-50 hover:text-[#1d4ed8] hover:border-blue-300 transition";
+        }
+      });
+    }
+
+    // CREACIÓN DE ORDEN
     function handleCreateOrder(e) {
       e.preventDefault();
       
@@ -785,7 +1149,7 @@
 
       if (techId) {
         const t = technicians.find(tech => tech.id === techId);
-        if (t) t.status = "ocupado";
+        if (t && t.status === "disponible") t.status = "en_cita";
       }
 
       orders.unshift(newOrder);
@@ -796,6 +1160,7 @@
       renderApp();
     }
 
+    // MODAL DE ALARMAS
     function openAlarmsModal() {
       document.getElementById("alarmsModal").classList.remove("hidden");
     }
@@ -803,6 +1168,7 @@
       document.getElementById("alarmsModal").classList.add("hidden");
     }
 
+    // MODAL IMPRESIÓN PDF
     function openPrintModal(orderId) {
       const order = orders.find(o => o.id === orderId);
       if (!order) return;
@@ -831,21 +1197,22 @@
       document.getElementById("printOrderModal").classList.add("hidden");
     }
 
+    // BÚSQUEDA
+    function handleSearch() {
+      renderApp();
+    }
+
+    // SIMULACIÓN DE WHATSAPP
     function simulateWhatsApp(phone, name) {
-      alert(`💬 SIMULACIÓN WHATSAPP:\n\nEnviando mensaje a ${name} (${phone}):\n\n"Hola, de parte de THEMO ServiSmart confirmamos tu cita técnica y te recordamos que cuentas con 3 meses de garantía en tu servicio de climatización."`);
+      alert(`💬 SIMULACIÓN WHATSAPP THEMO:\n\nEnviando mensaje a ${name} (${phone}):\n\n"Hola, de parte de THEMO ServiSmart confirmamos tu cita técnica y te recordamos que cuentas con 3 meses de garantía oficial en tu servicio."`);
     }
 
-    function resetSeedData() {
-      if (confirm("¿Restablecer los datos iniciales de la demo?")) {
-        location.reload();
-      }
-    }
-
+    // NOTIFICACIÓN TOAST
     function showToast(msg, type = "info") {
       const container = document.getElementById("toastContainer");
       const toast = document.createElement("div");
       const bg = type === "success" ? "bg-[#1d4ed8]" : "bg-[#1e293b]";
-      toast.className = `${bg} text-white px-4 py-2.5 rounded-lg shadow-lg text-xs font-bold transition-all duration-300 transform translate-y-2 opacity-0 flex items-center gap-2`;
+      toast.className = `${bg} text-white px-4 py-2.5 rounded-xl shadow-xl text-xs font-bold transition-all duration-300 transform translate-y-2 opacity-0 flex items-center gap-2 border border-white/10`;
       toast.innerHTML = `<span>🔔</span> <span>${msg}</span>`;
       container.appendChild(toast);
 
@@ -859,6 +1226,7 @@
       }, 3500);
     }
 
+    // INICIALIZACIÓN
     renderApp();
   </script>
 
